@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upgrade to PRO — Rulez</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f5f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .box {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,.1);
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #16a34a;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+<h2 data-i18n="pw_title">Требуется PRO</h2>
+<p data-i18n="pw_text">
+  Этот Facebook аккаунт уже использовался ранее.<br />
+  Повторное подключение доступно на PRO тарифе.
+</p>
+
+<button id="go-pro" data-i18n="pw_go_pro">Активировать PRO</button>
+<button id="continue-fb" style="display:none;margin-top:12px" data-i18n="pw_continue">
+  Продолжить подключение Facebook
+</button>
+  </div>
+
+<script>
+  const dict = {
+    ru: {
+      pw_title: 'Требуется PRO',
+      pw_text: 'Этот Facebook аккаунт уже использовался ранее.<br />Повторное подключение доступно на PRO тарифе.',
+      pw_go_pro: 'Активировать PRO',
+      pw_continue: 'Продолжить подключение Facebook',
+      pw_err_activate: 'Ошибка активации PRO',
+    },
+    en: {
+      pw_title: 'PRO required',
+      pw_text: 'This Facebook account was used before.<br />Re-connecting is available on the PRO plan.',
+      pw_go_pro: 'Activate PRO',
+      pw_continue: 'Continue Facebook connection',
+      pw_err_activate: 'Failed to activate PRO',
+    }
+  };
+
+  const lang = (localStorage.getItem('lang') || 'ru') === 'en' ? 'en' : 'ru';
+  const d = dict[lang];
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (d[k] != null) {
+      if (k === 'pw_text') el.innerHTML = d[k];
+      else el.textContent = d[k];
+    }
+  });
+
+  // ✅ объявляем кнопки
+  const goProBtn = document.getElementById('go-pro');
+  const contBtn  = document.getElementById('continue-fb');
+
+  goProBtn.onclick = async (e) => {
+    e.preventDefault();
+
+    const resp = await fetch('/api/app/select-plan', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: 'pro' })
+    });
+
+    const j = await resp.json().catch(() => ({}));
+
+    if (!resp.ok) {
+      alert(j.error || d.pw_err_activate);
+      return;
+    }
+
+    // ✅ открыть оплату в /app
+    if (j && j.open_payment) {
+      window.location.href = '/app?open_payment=1';
+      return;
+    }
+
+    // fallback
+    goProBtn.style.display = 'none';
+    contBtn.style.display = 'inline-block';
+  };
+</script>
+
+
+</body>
+</html>
