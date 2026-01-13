@@ -1508,18 +1508,28 @@ if (langToggle) {
 }
 
 tabs.forEach((tab) => {
-  tab.addEventListener("click", (e) => {
+  tab.addEventListener("click", async (e) => {
     e.preventDefault();
 
     const tabKey = tab.getAttribute("data-tab");
 
-    // подбираем нужный путь
+    // ✅ FORCE re-init creatives every time
+    if (tabKey === "creatives") {
+      console.log("[TAB] 🎯 Creatives tab clicked - forcing init");
+      creativesInitialized = false; // Reset flag
+
+      try {
+        await initCreativesTab();
+      } catch (e) {
+        console.error("[TAB] initCreativesTab failed:", e);
+      }
+    }
+
     let newPath = "/rules";
     if (tabKey === "logs") newPath = "/logs";
     else if (tabKey === "billing") newPath = "/payment";
     else if (tabKey === "creatives") newPath = "/creatives";
 
-    // меняем URL без перезагрузки
     if (window.location.pathname !== newPath) {
       window.history.pushState({ tabKey }, "", newPath);
     }
@@ -3681,82 +3691,160 @@ function ensureCreativesStyles() {
   const st = document.createElement("style");
   st.id = "crea-styles";
   st.textContent = `
-    /* Creatives grid */
-    #crea-results{
-      display:grid;
-      grid-template-columns:repeat(6,minmax(0,1fr));
-      gap:14px;
-      align-items:start;
-    }
-    @media (max-width: 1700px){
-      #crea-results{ grid-template-columns:repeat(5,minmax(0,1fr)); }
-    }
-    @media (max-width: 1450px){
-      #crea-results{ grid-template-columns:repeat(4,minmax(0,1fr)); }
-    }
-    @media (max-width: 1150px){
-      #crea-results{ grid-template-columns:repeat(3,minmax(0,1fr)); }
-    }
-    @media (max-width: 850px){
-      #crea-results{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-    }
-    @media (max-width: 520px){
-      #crea-results{ grid-template-columns:1fr; }
+    /* ===== METRICS GRID (CRITICAL) ===== */
+    .metric-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
     }
 
-    .crea-card{
-      border:1px solid rgba(0,0,0,.08);
-      border-radius:12px;
-      background:#fff;
-      padding:10px;
-      overflow:hidden;
-    }
-    .crea-title{
-      font-weight:600;
-      font-size:13px;
-      margin-bottom:8px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+    /* ===== METRIC CHECKBOXES ===== */
+    .mini-check {
+      display: flex !important;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg-tertiary, #1e293b);
+      border: 1px solid var(--border-primary, #334155);
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
     }
 
-    .crea-media{
-      width:100%;
-      height:170px;
-      border-radius:10px;
-      overflow:hidden;
-      background:rgba(0,0,0,.04);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      margin-bottom:10px;
-      position:relative;
+    .mini-check:hover {
+      background: var(--bg-card, #293548);
+      border-color: var(--primary-lilac, #a78bfa);
+      transform: translateY(-1px);
     }
+
+    .mini-check input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--primary-lilac, #a78bfa);
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .mini-check span {
+      font-size: 13px;
+      color: var(--text-secondary, #94a3b8);
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .mini-check input[type="checkbox"]:checked + span {
+      color: var(--text-primary, #f1f5f9);
+      font-weight: 600;
+    }
+
+    /* ===== CREATIVES GRID ===== */
+    #crea-results {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 14px;
+      align-items: start;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 1700px) {
+      #crea-results { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+    @media (max-width: 1450px) {
+      #crea-results { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 1150px) {
+      #crea-results { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 850px) {
+      #crea-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px) {
+      #crea-results { grid-template-columns: 1fr; }
+    }
+
+    .crea-card {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      background: var(--bg-card, #1e293b);
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .crea-title {
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-primary, #f1f5f9);
+    }
+
+    .crea-media {
+      width: 100%;
+      height: 170px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
     .crea-media img,
-    .crea-media video{
-      width:100%;
-      height:100%;
-      object-fit:contain;   /* default: do NOT crop, show full asset */
-      display:block;
-      background:rgba(0,0,0,.06);
-    }
-    body.crea-fit-cover .crea-media img,
-    body.crea-fit-cover .crea-media video{
-      object-fit:cover;     /* optional: crop to fill */
+    .crea-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
     }
 
-    .metric-table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:12px;
+    body.crea-fit-cover .crea-media img,
+    body.crea-fit-cover .crea-media video {
+      object-fit: cover;
     }
-    .metric-table td{
-      padding:4px 0;
-      border-top:1px solid rgba(0,0,0,.06);
+
+    .metric-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
     }
-    .metric-table td:last-child{
-      text-align:right;
-      font-variant-numeric:tabular-nums;
+
+    .metric-table td {
+      padding: 4px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary, #94a3b8);
+    }
+
+    .metric-table td:last-child {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary, #f1f5f9);
+      font-weight: 500;
+    }
+
+    /* ===== ACCOUNTS COLLAPSIBLE ===== */
+    .crea-accounts-row .crea-accounts-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .crea-accounts-row.open .crea-accounts-body {
+      max-height: 400px;
+    }
+
+    .crea-accounts-row .chevron {
+      transition: transform 0.3s ease;
+    }
+
+    .crea-accounts-row.open .chevron {
+      transform: rotate(180deg);
     }
   `;
   document.head.appendChild(st);
@@ -4115,32 +4203,65 @@ function renderAccountsMultiSelect(accounts) {
   updateAllLabel();
   list.appendChild(wrap);
 
-  // важно: сразу применяем лимит после рендера
+  // важно: сразу применяем лимит после рensureендера
   updateCreaAccountCheckboxLimit();
 }
 
 // ---- filters / sorting / toggles ----
 function renderMetricToggles() {
-  const toggles = document.getElementById("crea-metric-toggles");
-  if (!toggles) return;
-  toggles.innerHTML = "";
+  console.log("[METRICS] ===== renderMetricToggles START =====");
 
-  CREA_METRICS.forEach((m) => {
+  const toggles = document.getElementById("crea-metric-toggles");
+  console.log("[METRICS] Element:", toggles);
+  console.log("[METRICS] Element exists:", !!toggles);
+  console.log("[METRICS] Element visible:", toggles?.offsetParent !== null);
+
+  if (!toggles) {
+    console.error("[METRICS] ❌ CRITICAL: #crea-metric-toggles NOT FOUND!");
+
+    // Debug: check if tab is visible
+    const tab = document.getElementById("tab-creatives");
+    console.log("[METRICS] Tab exists:", !!tab);
+    console.log("[METRICS] Tab classes:", tab?.className);
+
+    return;
+  }
+
+  toggles.innerHTML = "";
+  console.log("[METRICS] Creating", CREA_METRICS.length, "toggles");
+
+  CREA_METRICS.forEach((m, idx) => {
     const label = document.createElement("label");
     label.className = "mini-check";
+    label.style.display = "flex"; // Force visible
+
     const cb = document.createElement("input");
     cb.type = "checkbox";
     cb.checked = true;
     cb.setAttribute("data-mkey", m.key);
-    cb.addEventListener("change", () => renderCreatives());
-    label.appendChild(cb);
+    cb.addEventListener("change", () => {
+      console.log("[METRICS] Checkbox changed:", m.key, cb.checked);
+      renderCreatives();
+    });
 
     const span = document.createElement("span");
     span.textContent = m.label;
+    span.style.color = "#f1f5f9"; // Force color
+
+    label.appendChild(cb);
     label.appendChild(span);
     toggles.appendChild(label);
+
+    if (idx === 0) {
+      console.log("[METRICS] First toggle HTML:", label.outerHTML);
+    }
   });
+
+  console.log("[METRICS] ✅ Rendered", toggles.children.length, "toggles");
+  console.log("[METRICS] Container HTML length:", toggles.innerHTML.length);
+  console.log("[METRICS] ===== renderMetricToggles COMPLETE =====");
 }
+// ✅ DEBUG: Log when metrics are rendered
 
 function renderSortControls() {
   const selMetric = document.getElementById("crea-sort-metric");
@@ -4490,114 +4611,184 @@ async function loadCreatives() {
 }
 
 async function initCreativesTab() {
-  if (creativesInitialized) return;
+  console.log("[CREA] ===== initCreativesTab START =====");
+
+  if (creativesInitialized) {
+    console.log("[CREA] Already initialized");
+    return;
+  }
   creativesInitialized = true;
 
-  ensureCreativesStyles();
-  ensureCreaConnectionsBox();
-  await renderCreaConnectionsMultiSelect();
-  await creaReloadAccountsFromSelectedFarms();
-
-  // Fit toggle: contain (default) / cover (crop)
-  (function ensureFitToggle() {
-    if (document.getElementById("crea-fit-cover")) return;
-
-    const toggles = document.getElementById("crea-metric-toggles");
-    const host = toggles ? toggles.parentElement || toggles : null;
-    if (!host) return;
-
-    const label = document.createElement("label");
-    label.style.cssText =
-      "display:flex;align-items:center;gap:6px;margin-left:10px;font-size:12px;user-select:none;";
-
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.id = "crea-fit-cover";
-
-    const txt = document.createElement("span");
-    txt.textContent = "Crop (cover)";
-
-    label.appendChild(cb);
-    label.appendChild(txt);
-    host.appendChild(label);
-
-    cb.addEventListener("change", () => {
-      document.body.classList.toggle("crea-fit-cover", cb.checked);
-    });
-  })();
-
-  setDefaultDates();
-  renderMetricToggles();
-  renderSortControls();
-
-  // filters
-  const box = document.getElementById("crea-filter-list");
-  const btnAdd = document.getElementById("crea-add-filter");
-  const btnApply = document.getElementById("crea-apply-filter");
-  const btnClear = document.getElementById("crea-clear-filter");
-
-  if (btnAdd && box) btnAdd.onclick = () => box.appendChild(createFilterRow());
-  if (btnApply) btnApply.onclick = () => applyCreaView();
-  if (btnClear && box)
-    btnClear.onclick = () => {
-      box.innerHTML = "";
-      applyCreaView();
-    };
-
-  // search
-  const search = document.getElementById("crea-search");
-  if (search) search.oninput = () => applyCreaView();
-
-  // load button
-  const btn =
-    document.getElementById("crea-load") ||
-    document.getElementById("creatives-load-btn");
-  if (btn) btn.onclick = () => loadCreatives();
-
-  // accounts list
-
-  async function ensureFbSelectedForApi() {
-    // 🔐 1. Проверяем SaaS-сессию (email login)
-    const appMe = await getAppMe().catch(() => null);
-    if (!appMe?.id) {
-      showLogin();
-      return false;
-    }
-
-    // 🔗 2. Получаем подключения
-    const c = await apiGet("/api/connections").catch(() => null);
-    if (!c || !Array.isArray(c.connections)) {
-      console.warn("No connections");
-      return false;
-    }
-
-    // ✅ 3. Ищем активную farm
-    const active = c.connections.find((x) => x.status === "active");
-    if (!active) {
-      console.warn("No active FB connection");
-      return false;
-    }
-
-    // 🔁 4. Если farm не выбрана — выбираем
-    if (
-      !c.selected_connection_id ||
-      String(c.selected_connection_id) !== String(active.id)
-    ) {
-      const r = await fetch("/api/connections/select", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ connection_id: active.id }),
-      });
-
-      if (!r.ok) {
-        console.warn("Failed to select active FB connection");
-        return false;
-      }
-    }
-
-    return true;
+  // Step 1: Styles
+  try {
+    ensureCreativesStyles();
+    console.log("[CREA] ✓ Styles injected");
+  } catch (e) {
+    console.error("[CREA] ✗ Styles failed:", e);
   }
 
-  // accounts list
+  // Step 2: Connections box
+  try {
+    ensureCreaConnectionsBox();
+    console.log("[CREA] ✓ Connections box created");
+  } catch (e) {
+    console.error("[CREA] ✗ Connections box failed:", e);
+  }
+
+  // Step 3: Load connections
+  try {
+    await renderCreaConnectionsMultiSelect();
+    console.log("[CREA] ✓ Connections loaded");
+  } catch (e) {
+    console.error("[CREA] ✗ Connections failed:", e);
+  }
+
+  // Step 4: Load accounts
+  try {
+    await creaReloadAccountsFromSelectedFarms();
+    console.log("[CREA] ✓ Accounts loaded");
+  } catch (e) {
+    console.error("[CREA] ✗ Accounts failed:", e);
+  }
+
+  // Step 5: Fit toggle
+  try {
+    (function ensureFitToggle() {
+      if (document.getElementById("crea-fit-cover")) return;
+
+      const toggles = document.getElementById("crea-metric-toggles");
+      const host = toggles ? toggles.parentElement : null;
+      if (!host) return;
+
+      const label = document.createElement("label");
+      label.style.cssText =
+        "display:flex;align-items:center;gap:6px;margin-left:10px;font-size:12px;user-select:none;";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.id = "crea-fit-cover";
+
+      const txt = document.createElement("span");
+      txt.textContent = "Crop (cover)";
+
+      label.appendChild(cb);
+      label.appendChild(txt);
+      host.appendChild(label);
+
+      cb.addEventListener("change", () => {
+        document.body.classList.toggle("crea-fit-cover", cb.checked);
+      });
+    })();
+    console.log("[CREA] ✓ Fit toggle added");
+  } catch (e) {
+    console.error("[CREA] ✗ Fit toggle failed:", e);
+  }
+
+  // Step 6: Default dates
+  try {
+    setDefaultDates();
+    console.log("[CREA] ✓ Default dates set");
+  } catch (e) {
+    console.error("[CREA] ✗ Default dates failed:", e);
+  }
+
+  // Step 7: METRICS TOGGLES (CRITICAL) - Force render with delay
+  setTimeout(() => {
+    try {
+      console.log("[CREA] 🎯 Rendering metrics toggles NOW");
+      renderMetricToggles();
+
+      // Verify
+      const toggles = document.getElementById("crea-metric-toggles");
+      if (toggles) {
+        console.log(
+          "[CREA] ✓ Metrics rendered:",
+          toggles.children.length,
+          "items"
+        );
+        console.log("[CREA] ✓ HTML:", toggles.innerHTML.slice(0, 200));
+      } else {
+        console.error("[CREA] ✗ Element still missing after render!");
+      }
+    } catch (e) {
+      console.error("[CREA] ✗ Metrics toggles failed:", e);
+    }
+  }, 200);
+
+  // Step 8: Sort controls
+  try {
+    renderSortControls();
+    console.log("[CREA] ✓ Sort controls rendered");
+  } catch (e) {
+    console.error("[CREA] ✗ Sort controls failed:", e);
+  }
+
+  // Step 9: FILTER BUTTONS (RE-BIND)
+  setTimeout(() => {
+    const box = document.getElementById("crea-filter-list");
+    const btnAdd = document.getElementById("crea-add-filter");
+    const btnApply = document.getElementById("crea-apply-filter");
+    const btnClear = document.getElementById("crea-clear-filter");
+
+    console.log("[CREA] Button check:", {
+      btnAdd: !!btnAdd,
+      btnApply: !!btnApply,
+      btnClear: !!btnClear,
+      box: !!box,
+    });
+
+    if (btnAdd) {
+      const newAdd = btnAdd.cloneNode(true);
+      btnAdd.parentNode.replaceChild(newAdd, btnAdd);
+      newAdd.onclick = () => {
+        console.log("[CREA] Add filter clicked");
+        if (box) box.appendChild(createFilterRow());
+      };
+      console.log("[CREA] ✓ Add filter button bound");
+    }
+
+    if (btnApply) {
+      const newApply = btnApply.cloneNode(true);
+      btnApply.parentNode.replaceChild(newApply, btnApply);
+      newApply.onclick = () => {
+        console.log("[CREA] Apply clicked");
+        applyCreaView();
+      };
+      console.log("[CREA] ✓ Apply button bound");
+    }
+
+    if (btnClear) {
+      const newClear = btnClear.cloneNode(true);
+      btnClear.parentNode.replaceChild(newClear, btnClear);
+      newClear.onclick = () => {
+        console.log("[CREA] Clear clicked");
+        if (box) box.innerHTML = "";
+        applyCreaView();
+      };
+      console.log("[CREA] ✓ Clear button bound");
+    }
+
+    // Step 10: Search
+    const search = document.getElementById("crea-search");
+    if (search) {
+      const newSearch = search.cloneNode(true);
+      search.parentNode.replaceChild(newSearch, search);
+      newSearch.oninput = () => applyCreaView();
+      console.log("[CREA] ✓ Search input bound");
+    }
+
+    // Step 11: Load button
+    const btn = document.getElementById("crea-load");
+    if (btn) {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      newBtn.onclick = () => {
+        console.log("[CREA] Load button clicked");
+        loadCreatives();
+      };
+      console.log("[CREA] ✓ Load button bound");
+    }
+
+    console.log("[CREA] ===== initCreativesTab COMPLETE =====");
+  }, 300);
 }
