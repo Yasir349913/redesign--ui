@@ -3206,7 +3206,7 @@ async function initBillingUI() {
           <div style="text-align:center; padding:50px; font-family:system-ui,sans-serif;">
             <h2>Authentication Error</h2>
             <p>Unable to verify session. Please try logging in again.</p>
-            <p style="color:#888;font-size:14px;">Make sure you're accessing via https://rulez.vip</p>
+            <p style="color:#888;font-size:14px;">Make sure you're accessing via http://localhost:3000</p>
             <a href="/" style="color:#3b82f6;">Go to Login Page</a>
           </div>
         `;
