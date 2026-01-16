@@ -1,5 +1,6 @@
 // ====== i18n ======
 let SAAS_BLOCKED = false;
+document.documentElement.classList.add("gsap-ready");
 
 const i18n = {
   ru: {
@@ -609,13 +610,12 @@ function billApplyInvoiceUI(inv) {
   updateExpires(inv.expires_at);
 
   document.getElementById("bill-hint").textContent = isRu
-    ? "После оплаты нажмите “Проверить оплату”."
-    : "After payment click “Check payment”.";
+    ? 'После оплаты нажмите "Проверить оплату".'
+    : 'After payment click "Check payment".';
 
   if (billPollTimer) clearInterval(billPollTimer);
   billPollTimer = setInterval(() => billCheckStatus(true), 10000);
 }
-
 function billOpenModal(fromWhere = "app") {
   const m = document.getElementById("bill-modal");
   if (!m) return;
@@ -1368,7 +1368,7 @@ async function apiJson(url, method, body) {
     throw err;
   }
 
-  // 5) ЕДИНАЯ точка “нужна оплата”
+  // 5) ЕДИНАЯ точка "нужна оплата"
   if (needBilling) {
     // reason для логики init/showLogin
     const lr = isAntifraud
@@ -1413,7 +1413,7 @@ async function apiJson(url, method, body) {
     throw err;
   }
 
-  // 6) 401 “не авторизован”
+  // 6) 401 "не авторизован"
   if (isNotAuth) {
     const err = new Error("Not authenticated");
     err.code = "SAAS_NOT_AUTH";
@@ -1505,6 +1505,63 @@ if (langToggle) {
     renderRules();
     renderLogs();
   });
+}
+
+// ============================================
+// TABS FIX - Prevent GSAP animation issues
+// ============================================
+document.addEventListener("DOMContentLoaded", function () {
+  // ✅ 1. Remove any GSAP animation classes from tabs
+  const tabsContainer = document.querySelector(".tabs");
+  if (tabsContainer) {
+    // Remove animation classes
+    tabsContainer.classList.remove(
+      "gsap-slide-up",
+      "gsap-slide-down",
+      "gsap-fade-in",
+      "gsap-scale-in"
+    );
+
+    // Force immediate visibility
+    tabsContainer.style.opacity = "1";
+    tabsContainer.style.transform = "none";
+  }
+
+  // ✅ 2. Ensure all tab content containers have consistent width
+  const tabContents = document.querySelectorAll(
+    "#tab-rules, #tab-logs, #tab-billing, #tab-creatives"
+  );
+
+  tabContents.forEach((content) => {
+    content.style.maxWidth = "1000px";
+    content.style.width = "100%";
+    content.style.margin = "0 auto";
+  });
+
+  // ✅ 3. Prevent tabs animation on any future GSAP calls
+  // if (typeof gsap !== "undefined") {
+  //   gsap.set(".tabs", {
+  //     opacity: 1,
+  //     y: 0,
+  //     clearProps: "all",
+  //   });
+  // }
+});
+
+// ✅ 4. Also prevent animation when switching tabs
+const originalActivateTab = window.activateTab;
+if (typeof originalActivateTab === "function") {
+  window.activateTab = function (tabKey) {
+    // Call original function
+    originalActivateTab(tabKey);
+
+    // Ensure tabs container stays visible and positioned
+    const tabsContainer = document.querySelector(".tabs");
+    if (tabsContainer) {
+      tabsContainer.style.opacity = "1";
+      tabsContainer.style.transform = "none";
+    }
+  };
 }
 
 tabs.forEach((tab) => {

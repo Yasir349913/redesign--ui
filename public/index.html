@@ -6,15 +6,35 @@
   <meta charset="UTF-8" />
   <title>rulez.vip — Auto Rules</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Google Fonts - Inter for modern UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
   <link rel="stylesheet" href="styles.css" />
+  
+  <!-- GSAP Animation Library + ScrollTrigger Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+/* EMERGENCY: Force visibility */
+* {
+  opacity: 1 !important;
+}
+</style>
 </head>
 <body>
   <div id="app">
-<header class="top-bar">
+<header class="top-bar gsap-fade-in">
 <div class="logo-wrap">
-  <div class="logo">rulez.vip</div>
+  <div class="logo">
+    <img src="images/logo-img1.png" alt="Logo">
+  </div>
   <div id="plan-label" class="plan-label"></div>
 </div>
+
   
   <div class="top-right">
 
@@ -29,14 +49,15 @@
     <main class="main-content">
       <!-- экран логина -->
       <div id="login-screen" class="center-screen">
-        <button id="login-btn" class="primary-btn" data-i18n="login_btn">
+        <button id="login-btn" class="primary-btn gsap-scale-in" data-i18n="login_btn">
           Войти через Facebook
         </button>
       </div>
 
       <!-- основной экран приложения -->
       <div id="app-screen" class="hidden">
-        <nav class="tabs">
+        <!-- TABS - Fixed height navigation -->
+        <nav class="tabs gsap-slide-down">
           <button class="tab active" data-tab="rules" data-i18n="tab_rules">Правила</button>
           <button class="tab" data-tab="logs" data-i18n="tab_logs">Логи</button>
           <button class="tab" data-tab="billing" data-i18n="tab_billing">Оплата</button>
@@ -45,36 +66,36 @@
 
         <!-- вкладка Правила -->
         <section id="tab-rules" class="tab-content active">
-          <div class="section-header">
+          <div class="section-header gsap-slide-up">
             <h2 data-i18n="rules_title">Правила</h2>
             <button id="create-rule-btn" class="primary-btn" data-i18n="create_rule_btn">
               Создать правило
             </button>
           </div>
-          <div id="rules-list" class="card-list">
+          <div id="rules-list" class="card-list gsap-stagger">
             <p class="muted" data-i18n="no_rules">Правил пока нет.</p>
           </div>
         </section>
 
         <!-- вкладка Логи -->
         <section id="tab-logs" class="tab-content">
-          <div class="section-header">
+          <div class="section-header gsap-slide-up">
             <h2 data-i18n="logs_title">Логи</h2>
           </div>
-          <div id="logs-list" class="card-list">
+          <div id="logs-list" class="card-list gsap-stagger">
             <p class="muted" data-i18n="no_logs">Логов пока нет.</p>
           </div>
- </section>
+        </section>
 
         <!-- вкладка Оплата -->
         <section id="tab-billing" class="tab-content">
 <section id="billing-page">
 
-<h2 class="plans-title" data-i18n="billing_plans_title">Тарифы</h2>
+<h2 class="plans-title gsap-slide-up" data-i18n="billing_plans_title">Тарифы</h2>
 
-<div class="plans-wrap birch-plans">
+<div class="plans-wrap birch-plans gsap-stagger">
 
-  <!-- TRIAL -->
+  <!-- TRIAL CARD -->
   <div class="plan-card birch-card" id="plan-trial">
     <div class="plan-top">
       <div class="plan-name">Trial</div>
@@ -100,7 +121,7 @@
     <div class="plan-note" id="trial-note"></div>
   </div>
 
-  <!-- PRO -->
+  <!-- PRO CARD -->
   <div class="plan-card birch-card birch-pro" id="plan-pro">
     <div class="plan-top">
       <div class="plan-name">Pro</div>
@@ -140,11 +161,11 @@
 <!-- вкладка Креативы  -->
 <section id="tab-creatives" class="tab-content">
 
-  <div class="crea-header">
+  <div class="crea-header gsap-slide-up">
     <h2 data-i18n="crea_title">Креативы</h2>
   </div>
 
-<div class="crea-panel">
+<div class="crea-panel gsap-fade-in">
     <!-- ROW 1: ACCOUNTS (COLLAPSIBLE) -->
     <div class="crea-row crea-accounts-row">
       <div class="crea-accounts-summary" id="crea-accounts-toggle">
@@ -226,7 +247,7 @@
     </div>
 
   </div>
-  <div id="crea-results" class="crea-grid"></div>
+  <div id="crea-results" class="crea-grid gsap-stagger"></div>
 </section>
  </div>
     </main> 
@@ -427,7 +448,7 @@
     }
   </script>
 
-  <footer class="app-footer">
+  <footer class="app-footer gsap-fade-in">
     <div class="app-footer-inner">
       <div class="app-footer-left">© 2025 Rulez.vip</div>
       <div class="app-footer-links">
@@ -438,103 +459,112 @@
     </div>
   </footer>
 </div> <!-- ВАЖНО: закрываем #app -->
+
 <!-- ===== Billing Modal (shared) ===== -->
 <div id="bill-modal" class="modal hidden">
-  <div class="modal-content" style="max-width:760px;">
+  <div class="modal-backdrop" id="bill-backdrop"></div>
+
+  <div class="modal-content bill-modal-content" style="max-width:760px;">
+
     <div class="modal-header">
       <div class="modal-title" id="bill-title">PRO subscription</div>
       <button id="bill-close" class="secondary-btn small">✕</button>
     </div>
 
-    <div class="muted" id="bill-desc" style="margin-top:6px;">
-      Amount is fixed and cannot be edited.
-    </div>
+    <!-- ✅ NEW: scroll wrapper (NO existing ids/classes changed) -->
+    <div class="bill-modal-scroll">
 
-    <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
-      <div style="min-width:200px;">
-        <div class="muted" style="margin-bottom:6px;">Amount</div>
-        <div style="font-size:28px; font-weight:700;">
-          <span id="bill-amount">$10</span>
-        </div>
+      <div class="muted" id="bill-desc" style="margin-top:6px;">
+        Amount is fixed and cannot be edited.
       </div>
 
-<div style="min-width:420px; flex:1;">
-  <div class="muted" style="margin-bottom:6px;">Pay with</div>
-
-  <!-- скрытое поле: сюда JS будет писать выбранную валюту -->
-  <input type="hidden" id="bill-currency" value="USDTTRC20">
-
-  <div class="bill-pay-grid" id="bill-pay-grid">
-<button type="button" class="bill-pay-card active" data-currency="USDTTRC20">
-  <img class="bill-pay-logo" src="/img/usdt.png" alt="USDT">
-  <div class="bill-pay-text">
-    <div class="bill-pay-name">USDT TRC20</div>
-    <div class="bill-pay-sub">Recommended</div>
-  </div>
-</button>
-
-<button type="button" class="bill-pay-card" data-currency="USDTBSC">
-  <img class="bill-pay-logo" src="/img/bep.png" alt="BEP">
-  <div class="bill-pay-text">
-    <div class="bill-pay-name">USDT BEP20</div>
-    <div class="bill-pay-sub">Low fees</div>
-  </div>
-</button>
-
-<button type="button" class="bill-pay-card" data-currency="BTC">
-  <img class="bill-pay-logo" src="/img/btc.png" alt="BTC">
-  <div class="bill-pay-text">
-    <div class="bill-pay-name">Bitcoin</div>
-    <div class="bill-pay-sub">BTC</div>
-  </div>
-</button>
-
-  </div>
-</div>
-
-
-      <button id="bill-create" class="primary-btn">Create invoice</button>
-    </div>
-
-    <div id="bill-stage" style="margin-top:16px;" class="hidden">
-      <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start;">
-        <div style="min-width:220px;">
-          <div class="muted" style="margin-bottom:6px;">QR</div>
-          <img id="bill-qr" alt="QR" style="width:220px; height:220px; border-radius:12px; background:#fff;" />
+      <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+        <div style="min-width:200px;">
+          <div class="muted" style="margin-bottom:6px;">Amount</div>
+          <div style="font-size:28px; font-weight:700;">
+            <span id="bill-amount">$10</span>
+          </div>
         </div>
 
-        <div style="flex:1; min-width:280px;">
-          <div class="muted" style="margin-bottom:6px;">Address</div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <input id="bill-address" class="input" style="width:100%;" readonly />
-            <button id="bill-copy" class="secondary-btn small">📋</button>
+        <div style="min-width:420px; flex:1;">
+          <div class="muted" style="margin-bottom:6px;">Pay with</div>
+
+          <!-- скрытое поле: сюда JS будет писать выбранную валюту -->
+          <input type="hidden" id="bill-currency" value="USDTTRC20">
+
+          <div class="bill-pay-grid" id="bill-pay-grid">
+            <button type="button" class="bill-pay-card active" data-currency="USDTTRC20">
+              <img class="bill-pay-logo" src="/img/usdt.png" alt="USDT">
+              <div class="bill-pay-text">
+                <div class="bill-pay-name">USDT TRC20</div>
+                <div class="bill-pay-sub">Recommended</div>
+              </div>
+            </button>
+
+            <button type="button" class="bill-pay-card" data-currency="USDTBSC">
+              <img class="bill-pay-logo" src="/img/bep.png" alt="BEP">
+              <div class="bill-pay-text">
+                <div class="bill-pay-name">USDT BEP20</div>
+                <div class="bill-pay-sub">Low fees</div>
+              </div>
+            </button>
+
+            <button type="button" class="bill-pay-card" data-currency="BTC">
+              <img class="bill-pay-logo" src="/img/btc.png" alt="BTC">
+              <div class="bill-pay-text">
+                <div class="bill-pay-name">Bitcoin</div>
+                <div class="bill-pay-sub">BTC</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <button id="bill-create" class="primary-btn">Create invoice</button>
+      </div>
+
+      <div id="bill-stage" style="margin-top:16px;" class="hidden">
+        <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start;">
+          <div style="min-width:220px;">
+            <div class="muted" style="margin-bottom:6px;">QR</div>
+            <img id="bill-qr" alt="QR" style="width:220px; height:220px; border-radius:12px; background:#fff;" />
           </div>
 
-          <div class="muted" style="margin:12px 0 6px;">Amount to send</div>
-          <input id="bill-pay-amount" class="input" readonly />
+          <div style="flex:1; min-width:280px;">
+            <div class="muted" style="margin-bottom:6px;">Address</div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <input id="bill-address" class="input" style="width:100%;" readonly />
+              <button id="bill-copy" class="secondary-btn small">📋</button>
+            </div>
 
-          <div class="muted" style="margin:12px 0 6px;">Status</div>
-          <div id="bill-status" class="muted">pending</div>
+            <div class="muted" style="margin:12px 0 6px;">Amount to send</div>
+            <input id="bill-pay-amount" class="input" readonly />
 
-          <div class="muted" style="margin:10px 0 0;">
-            Expires in: <span id="bill-expires">—</span>
-          </div>
+            <div class="muted" style="margin:12px 0 6px;">Status</div>
+            <div id="bill-status" class="muted">pending</div>
 
-<div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-  <button id="bill-check" class="secondary-btn">Check payment</button>
-  <button type="button" id="bill-cancel" class="bill-btn-secondary">
-    Cancel invoice
-  </button>
-</div>
+            <div class="muted" style="margin:10px 0 0;">
+              Expires in: <span id="bill-expires">—</span>
+            </div>
 
-<div id="bill-status-text" class="bill-hint" style="margin-top:8px;"></div>
+            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button id="bill-check" class="secondary-btn">Check payment</button>
+              <button type="button" id="bill-cancel" class="bill-btn-secondary">
+                Cancel invoice
+              </button>
+            </div>
+
+            <div id="bill-status-text" class="bill-hint" style="margin-top:8px;"></div>
           </div>
 
           <div id="bill-hint" class="muted" style="margin-top:10px;"></div>
         </div>
       </div>
-    </div>
+
+    </div><!-- ✅ /bill-modal-scroll -->
+
   </div>
+</div>
+
 </div>
 
 <div id="ui-modal" class="ui-modal hidden">
@@ -545,6 +575,99 @@
     <button class="ui-modal-btn" id="ui-modal-ok">OK</button>
   </div>
 </div>
+
+<!-- ===== GSAP ANIMATIONS INITIALIZATION ===== -->
+<!-- Replace the entire GSAP ANIMATIONS INITIALIZATION script with this: -->
+<script>
+// ============================================
+// GSAP ANIMATIONS - SAFE INITIALIZATION
+// ============================================
+
+// CRITICAL: Set fallback visibility immediately
+(function() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .gsap-fade-in,
+    .gsap-slide-up,
+    .gsap-slide-down,
+    .gsap-slide-left,
+    .gsap-slide-right,
+    .gsap-scale-in,
+    .gsap-rotate-in {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Remove after GSAP loads
+  setTimeout(() => style.remove(), 50);
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Safety check: if GSAP not loaded, show everything
+  if (typeof gsap === 'undefined') {
+    console.warn('GSAP not loaded, skipping animations');
+    return;
+  }
+
+  try {
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Timeline for coordinated entrance
+    const pageLoadTL = gsap.timeline({ 
+      defaults: { ease: 'power3.out' },
+      onStart: () => console.log('GSAP animations started')
+    });
+    
+    // Top bar
+    pageLoadTL.fromTo('.top-bar', 
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.6 }
+    );
+    
+    // Logo
+    pageLoadTL.fromTo('.logo',
+      { scale: 0.8, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' },
+      '-=0.3'
+    );
+    
+    // Tabs
+    pageLoadTL.fromTo('.tabs',
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.5 },
+      '-=0.3'
+    );
+    
+    // Tab buttons
+    pageLoadTL.fromTo('.tab',
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, stagger: 0.1, duration: 0.4 },
+      '-=0.2'
+    );
+    
+    // Footer
+    pageLoadTL.fromTo('.app-footer',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5 },
+      '-=0.3'
+    );
+    
+    // Rest of your GSAP code...
+    // (keep all the other animations)
+    
+  } catch (error) {
+    console.error('GSAP initialization failed:', error);
+    // Fallback: make everything visible
+    document.querySelectorAll('[class*="gsap-"]').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }
+});
+</script>
+
 <script>
 (function () {
   try {

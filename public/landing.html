@@ -1,204 +1,1052 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rulez.vip — Auto Rules + Creatives Analytics</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <style>
-    .lp { max-width: 1100px; margin: 0 auto; padding: 28px 18px; }
-    .lp-grid { display:grid; grid-template-columns: 1.2fr .8fr; gap:18px; align-items:start; }
-    .lp-card { background:#0f1116; border:1px solid #222838; border-radius:16px; padding:16px; }
-    .lp h1 { font-size:28px; margin:0 0 10px; }
-    .muted { color:#a7b0c0; }
-    .feat { display:grid; gap:10px; margin-top:12px; }
-    .feat div { background:#0b0d12; border:1px solid #1f2533; border-radius:12px; padding:12px; }
-    .form-row { display:flex; gap:10px; }
-    .form-row > * { flex:1; }
-    input { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #2a3144; background:#0b0d12; color:#fff; }
-    button { width:100%; padding:10px 12px; border-radius:10px; border:0; background:#3b82f6; color:#fff; cursor:pointer; }
-    button.secondary { background:#1f2937; }
-    .tabs { display:flex; gap:8px; margin-bottom:10px; }
-    .tabbtn { padding:8px 10px; border-radius:10px; border:1px solid #2a3144; background:#0b0d12; color:#fff; cursor:pointer; }
-    .tabbtn.active { background:#111827; border-color:#3b82f6; }
-    .msg { margin-top:10px; font-size:14px; }
-    .ok { color:#34d399; }
-    .err { color:#fb7185; }
-    a { color:#93c5fd; }
-  </style>
-</head>
-<body>
-  <div class="lp">
-    <div class="lp-grid">
-      <div class="lp-card">
-        <h1>Rulez.vip — автоправила и аналитика креативов</h1>
-        <p class="muted">
-          Управляй рекламными кампаниями как в Bir.ch / Madgicx: авто-паузы, масштабирование, контроль бюджета и быстрый анализ креативов.
-        </p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Rulez.vip — Auto Rules + Creatives Analytics</title>
 
-        <div class="feat">
-          <div><b>Аналитика креативов</b><br><span class="muted">Видео/картинки, метрики, сортировки, поиск.</span></div>
-          <div><b>Управление кампаниями</b><br><span class="muted">Статусы, бюджет, действия по условиям.</span></div>
-          <div><b>Масштабирование</b><br><span class="muted">Автоповышение/понижение бюджета по KPI.</span></div>
-          <div><b>Trial на старте</b><br><span class="muted">Без оплаты, ограничение по фармам/кабинетам.</span></div>
-        </div>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
 
-        <p class="muted" style="margin-top:12px">
-          Уже есть аккаунт? Войди и продолжай в приложении.
-        </p>
-        <p><a href="/app">Перейти в приложение</a></p>
-      </div>
+    <style>
+      /* EMERGENCY: Force visibility */
+      * {
+        opacity: 1 !important;
+      }
+    </style>
 
-      <div class="lp-card">
-        <div class="tabs">
-          <div class="tabbtn active" data-tab="login">Логин</div>
-          <div class="tabbtn" data-tab="register">Регистрация</div>
-          <div class="tabbtn" data-tab="reset">Восстановление</div>
-        </div>
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
-        <div id="tab-login">
-          <div class="form-row">
-            <input id="login-email" placeholder="Email" />
+    <style>
+      /* ============================================
+       LANDING PAGE - LIGHT THEME
+       Lilac/Blue/Purple accents with light background
+       ============================================ */
+
+      :root {
+        /* Primary Colors */
+        --primary-lilac: #a78bfa;
+        --primary-blue: #3b82f6;
+        --primary-purple: #8b5cf6;
+        --primary-violet: #7c3aed;
+
+        /* Light Theme Backgrounds */
+        --bg-primary: #f8fafc;
+        --bg-secondary: #ffffff;
+        --bg-tertiary: #f1f5f9;
+        --bg-card: #ffffff;
+
+        /* Text Colors */
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+
+        /* Borders */
+        --border-light: #e2e8f0;
+        --border-primary: rgba(167, 139, 250, 0.25);
+
+        /* Shadows */
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+        --shadow-glow-lilac: 0 0 30px rgba(167, 139, 250, 0.4);
+        --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.4);
+
+        /* Radius */
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --radius-full: 9999px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #f8fafc 0%,
+          #e0e7ff 50%,
+          #f8fafc 100%
+        );
+        background-attachment: fixed;
+        color: var(--text-primary);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Animated background decorations */
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      body::before {
+        top: -100px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(167, 139, 250, 0.15) 0%,
+          transparent 70%
+        );
+        animation: float 8s ease-in-out infinite;
+      }
+
+      body::after {
+        bottom: -100px;
+        left: -100px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.12) 0%,
+          transparent 70%
+        );
+        animation: float 10s ease-in-out infinite reverse;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-30px) rotate(5deg);
+        }
+      }
+
+      @keyframes gradient-shift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse-glow {
+        0%,
+        100% {
+          box-shadow: var(--shadow-lg);
+        }
+        50% {
+          box-shadow: var(--shadow-glow-lilac);
+        }
+      }
+
+      .lp {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+      }
+
+      .lp-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 32px;
+        align-items: start;
+        width: 100%;
+      }
+
+      @media (max-width: 900px) {
+        .lp-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .lp-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        padding: 32px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        /* opacity: 0; */ /* COMMENTED OUT */
+        /* transform: translateY(30px); */ /* COMMENTED OUT */
+      }
+
+      /* Decorative gradient corner */
+      .lp-card::before {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(
+          135deg,
+          rgba(167, 139, 250, 0.15),
+          rgba(59, 130, 246, 0.1)
+        );
+        border-radius: 50%;
+        transition: transform 0.5s ease;
+      }
+
+      .lp-card:hover::before {
+        transform: scale(1.3);
+      }
+
+      .lp h1 {
+        font-size: 36px;
+        font-weight: 800;
+        margin: 0 0 16px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-lilac),
+          var(--primary-blue),
+          var(--primary-purple)
+        );
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 4s ease infinite;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+      }
+
+      .lp p {
+        position: relative;
+        z-index: 1;
+      }
+
+      .muted {
+        color: var(--text-muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .feat {
+        display: grid;
+        gap: 14px;
+        margin-top: 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .feat div {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+
+      .feat div:hover {
+        border-color: var(--primary-lilac);
+        transform: translateX(8px);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* ✅ SVG icons only (no emojis) */
+      .feat div b {
+        color: var(--text-primary);
+        font-weight: 700;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .feat .icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+        color: var(--primary-purple);
+      }
+
+      .feat div span {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .tabbtn {
+        padding: 12px 18px;
+        border-radius: var(--radius-md);
+        border: 2px solid var(--border-light);
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tabbtn::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(167, 139, 250, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.5s, height 0.5s;
+      }
+
+      .tabbtn:hover {
+        border-color: var(--primary-lilac);
+        color: var(--primary-purple);
+        transform: translateY(-2px);
+      }
+
+      .tabbtn:hover::before {
+        width: 150px;
+        height: 150px;
+      }
+
+      .tabbtn.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary-lilac),
+          var(--primary-purple)
+        );
+        color: white;
+        border-color: transparent;
+        box-shadow: var(--shadow-glow-lilac);
+      }
+
+      .tabbtn.active::before {
+        display: none;
+      }
+
+      /* Form elements */
+      .form-row {
+        display: flex;
+        gap: 12px;
+      }
+      .form-row > * {
+        flex: 1;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 18px;
+        border-radius: var(--radius-md);
+        border: 2px solid var(--border-light);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 14px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+      }
+
+      input:hover {
+        border-color: var(--border-primary);
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary-lilac);
+        box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.15);
+      }
+
+      input::placeholder {
+        color: var(--text-muted);
+      }
+
+      /* Buttons */
+      button:not(.tabbtn) {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: var(--radius-md);
+        border: none;
+        background: linear-gradient(
+          135deg,
+          var(--primary-lilac),
+          var(--primary-purple),
+          var(--primary-blue)
+        );
+        background-size: 200% 200%;
+        color: white;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        animation: gradient-shift 4s ease infinite;
+        position: relative;
+        overflow: hidden;
+      }
+
+      button:not(.tabbtn)::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.5s, height 0.5s;
+      }
+
+      button:not(.tabbtn):hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-glow-lilac);
+      }
+
+      button:not(.tabbtn):hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      button:not(.tabbtn):active {
+        transform: translateY(-1px);
+      }
+
+      button.secondary {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        animation: none;
+        border: 2px solid var(--border-light);
+      }
+
+      button.secondary:hover {
+        border-color: var(--primary-lilac);
+        background: var(--bg-secondary);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Messages */
+      .msg {
+        margin-top: 14px;
+        font-size: 14px;
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
+        display: none;
+      }
+      .msg:not(:empty) {
+        display: block;
+      }
+
+      .msg.ok {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+      }
+
+      .msg.err {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+      }
+
+      /* Links */
+      a {
+        color: var(--primary-blue);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+      }
+      a:hover {
+        color: var(--primary-purple);
+        text-decoration: underline;
+      }
+
+      /* Spacers */
+      .spacer-sm {
+        height: 12px;
+      }
+      .spacer-md {
+        height: 18px;
+      }
+      .spacer-lg {
+        height: 24px;
+      }
+
+      /* Tab content */
+      #tab-login,
+      #tab-register,
+      #tab-reset {
+        position: relative;
+        z-index: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ✅ Fallback visibility script (right after <body>) -->
+    <script>
+      // Force visible state immediately
+      document.addEventListener("DOMContentLoaded", function () {
+        // Fallback: make everything visible after 100ms if GSAP fails
+        setTimeout(() => {
+          const cards = document.querySelectorAll(".lp-card");
+          cards.forEach((card) => {
+            if (window.getComputedStyle(card).opacity === "0") {
+              card.style.opacity = "1";
+              card.style.transform = "translateY(0)";
+            }
+          });
+        }, 100);
+      });
+    </script>
+
+    <div class="lp">
+      <div class="lp-grid">
+        <!-- Left Card - Info -->
+        <div class="lp-card" id="info-card">
+          <h1>Rulez.vip — автоправила и аналитика креативов</h1>
+          <p class="muted">
+            Rulez.vip помогает управлять рекламой с помощью понятных правил и
+            быстро находить эффективные креативы. Меньше ручной работы — больше
+            контроля над KPI и бюджетом.
+          </p>
+
+          <div class="feat">
+            <div>
+              <b>
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M4 19V5" />
+                  <path d="M4 19h16" />
+                  <path d="M8 17V10" />
+                  <path d="M12 17V7" />
+                  <path d="M16 17v-4" />
+                </svg>
+                Аналитика креативов
+              </b>
+              <span class="muted"
+                >Видео/картинки, метрики, сортировки, поиск.</span
+              >
+            </div>
+
+            <div>
+              <b>
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="8" />
+                  <path d="M12 8v4l3 3" />
+                  <path d="M4 12H2" />
+                  <path d="M22 12h-2" />
+                  <path d="M12 4V2" />
+                  <path d="M12 22v-2" />
+                </svg>
+                Управление кампаниями
+              </b>
+              <span class="muted">Статусы, бюджет, действия по условиям.</span>
+            </div>
+
+            <div>
+              <b>
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 17l6-6 4 4 7-7" />
+                  <path d="M21 10V3h-7" />
+                </svg>
+                Масштабирование
+              </b>
+              <span class="muted">Автоповышение/понижение бюджета по KPI.</span>
+            </div>
+
+            <div>
+              <b>
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8" />
+                  <path d="M4 12h16" />
+                  <path d="M12 22V7" />
+                  <path
+                    d="M12 7c-1.5 0-3-1-3-2.5S10.5 2 12 3c1.5-1 3-0.5 3 1S13.5 7 12 7z"
+                  />
+                </svg>
+                Trial на старте
+              </b>
+              <span class="muted"
+                >Без оплаты, ограничение по фармам/кабинетам.</span
+              >
+            </div>
           </div>
-          <div style="height:10px"></div>
-          <div class="form-row">
-            <input id="login-pass" placeholder="Пароль" type="password" />
+
+          <p class="muted" style="margin-top: 24px">
+            Уже есть аккаунт? Войди и продолжай в приложении.
+          </p>
+          <p style="margin-top: 8px">
+            <a href="/app">Перейти в приложение →</a>
+          </p>
+        </div>
+
+        <!-- Right Card - Auth Forms -->
+        <div class="lp-card" id="auth-card">
+          <div class="tabs">
+            <div class="tabbtn active" data-tab="login">Логин</div>
+            <div class="tabbtn" data-tab="register">Регистрация</div>
+            <div class="tabbtn" data-tab="reset">Восстановление</div>
           </div>
-          <div style="height:10px"></div>
-          <button id="btn-login">Войти</button>
-          <div class="msg" id="login-msg"></div>
-        </div>
 
-        <div id="tab-register" style="display:none">
-          <input id="reg-email" placeholder="Email" />
-          <div style="height:10px"></div>
-          <input id="reg-pass" placeholder="Пароль (мин 8 символов)" type="password" />
-          <div style="height:10px"></div>
-          <button id="btn-register">Создать аккаунт</button>
-          <div class="msg" id="reg-msg"></div>
+          <!-- Login Tab -->
+          <div id="tab-login">
+            <div class="form-row">
+              <input id="login-email" placeholder="Email" type="email" />
+            </div>
+            <div class="spacer-sm"></div>
+            <div class="form-row">
+              <input id="login-pass" placeholder="Пароль" type="password" />
+            </div>
+            <div class="spacer-md"></div>
+            <button id="btn-login">Войти</button>
+            <div class="msg" id="login-msg"></div>
+          </div>
 
-          <div style="height:14px"></div>
-          <input id="verify-code" placeholder="Код из письма" />
-          <div style="height:10px"></div>
-          <button id="btn-verify" class="secondary">Подтвердить email</button>
-          <div class="msg" id="verify-msg"></div>
-        </div>
+          <!-- Register Tab -->
+          <div id="tab-register" style="display: none">
+            <input id="reg-email" placeholder="Email" type="email" />
+            <div class="spacer-sm"></div>
+            <input
+              id="reg-pass"
+              placeholder="Пароль (мин 8 символов)"
+              type="password"
+            />
+            <div class="spacer-md"></div>
+            <button id="btn-register">Создать аккаунт</button>
+            <div class="msg" id="reg-msg"></div>
 
-        <div id="tab-reset" style="display:none">
-          <input id="reset-email" placeholder="Email" />
-          <div style="height:10px"></div>
-          <button id="btn-reset-request">Отправить код</button>
-          <div class="msg" id="reset-msg"></div>
+            <div class="spacer-lg"></div>
+            <input id="verify-code" placeholder="Код из письма" />
+            <div class="spacer-sm"></div>
+            <button id="btn-verify" class="secondary">Подтвердить email</button>
+            <div class="msg" id="verify-msg"></div>
+          </div>
 
-          <div style="height:14px"></div>
-          <input id="reset-code" placeholder="Код из письма" />
-          <div style="height:10px"></div>
-          <input id="reset-newpass" placeholder="Новый пароль" type="password" />
-          <div style="height:10px"></div>
-          <button id="btn-reset-confirm" class="secondary">Сменить пароль</button>
-          <div class="msg" id="reset2-msg"></div>
+          <!-- Reset Tab -->
+          <div id="tab-reset" style="display: none">
+            <input id="reset-email" placeholder="Email" type="email" />
+            <div class="spacer-md"></div>
+            <button id="btn-reset-request">Отправить код</button>
+            <div class="msg" id="reset-msg"></div>
+
+            <div class="spacer-lg"></div>
+            <input id="reset-code" placeholder="Код из письма" />
+            <div class="spacer-sm"></div>
+            <input
+              id="reset-newpass"
+              placeholder="Новый пароль"
+              type="password"
+            />
+            <div class="spacer-md"></div>
+            <button id="btn-reset-confirm" class="secondary">
+              Сменить пароль
+            </button>
+            <div class="msg" id="reset2-msg"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-<script>
-  const $$ = (s) => document.querySelector(s);
-  const setMsg = (id, text, ok) => {
-    const el = $$(id);
-    if (!el) return;
-    el.textContent = text || '';
-    el.className = 'msg ' + (ok ? 'ok' : 'err');
-  };
+    <script>
+      // ============================================
+      // GSAP ENTRANCE ANIMATIONS
+      // ============================================
 
-  // tabs
-  document.querySelectorAll('.tabbtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const tab = btn.getAttribute('data-tab');
-      ['login','register','reset'].forEach(t => {
-        document.getElementById('tab-'+t).style.display = (t===tab) ? 'block' : 'none';
+      document.addEventListener("DOMContentLoaded", function () {
+        // Timeline for coordinated entrance
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        // Info card slides in from left
+        tl.to("#info-card", {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          delay: 0.2,
+        });
+
+        // Auth card slides in from right
+        tl.to(
+          "#auth-card",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+          },
+          "-=0.4"
+        );
+
+        // Title special animation
+        tl.from(
+          ".lp h1",
+          {
+            opacity: 0,
+            x: -30,
+            duration: 0.5,
+          },
+          "-=0.5"
+        );
+
+        // Features stagger in
+        tl.from(
+          ".feat > div",
+          {
+            opacity: 0,
+            x: -20,
+            stagger: 0.1,
+            duration: 0.4,
+          },
+          "-=0.3"
+        );
+
+        // Tabs animate in
+        tl.from(
+          ".tabbtn",
+          {
+            opacity: 0,
+            y: -15,
+            stagger: 0.1,
+            duration: 0.3,
+          },
+          "-=0.3"
+        );
+
+        // Form elements
+        tl.from(
+          "#tab-login input, #tab-login button",
+          {
+            opacity: 0,
+            y: 10,
+            stagger: 0.1,
+            duration: 0.3,
+          },
+          "-=0.2"
+        );
       });
-    });
-  });
 
-  async function post(url, body) {
-    const r = await fetch(url, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(body || {})
-    });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(j.error || ('HTTP '+r.status));
-    return j;
-  }
+      // ============================================
+      // HELPER FUNCTIONS
+      // ============================================
 
-  // register
-  $$('#btn-register').addEventListener('click', async () => {
-    setMsg('#reg-msg','',true);
-    try {
-      const email = $$('#reg-email').value.trim();
-      const password = $$('#reg-pass').value;
-      const j = await post('/api/auth/register', { email, password });
-      setMsg('#reg-msg', j.message || 'Ок. Проверь почту, введи код ниже.', true);
-    } catch(e) {
-      setMsg('#reg-msg', e.message, false);
-    }
-  });
+      const $$ = (s) => document.querySelector(s);
 
-  // verify
-  $$('#btn-verify').addEventListener('click', async () => {
-    setMsg('#verify-msg','',true);
-    try {
-      const email = $$('#reg-email').value.trim();
-      const code = $$('#verify-code').value.trim();
-      const j = await post('/api/auth/verify', { email, code });
-      setMsg('#verify-msg', j.message || 'Email подтвержден. Теперь логин.', true);
-    } catch(e) {
-      setMsg('#verify-msg', e.message, false);
-    }
-  });
+      const setMsg = (id, text, ok) => {
+        const el = $$(id);
+        if (!el) return;
+        el.textContent = text || "";
+        el.className = "msg " + (ok ? "ok" : "err");
 
-  // login
-  $$('#btn-login').addEventListener('click', async () => {
-    setMsg('#login-msg','',true);
-    try {
-      const email = $$('#login-email').value.trim();
-      const password = $$('#login-pass').value;
-      const j = await post('/api/auth/login', { email, password });
-      setMsg('#login-msg', j.message || 'Вошёл. Перехожу в приложение...', true);
-      setTimeout(() => location.href = '/app', 400);
-    } catch(e) {
-      setMsg('#login-msg', e.message, false);
-    }
-  });
+        // Animate message appearance
+        if (text) {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: -10 },
+            { opacity: 1, y: 0, duration: 0.3 }
+          );
+        }
+      };
 
-  // reset request
-  $$('#btn-reset-request').addEventListener('click', async () => {
-    setMsg('#reset-msg','',true);
-    try {
-      const email = $$('#reset-email').value.trim();
-      const j = await post('/api/auth/reset/request', { email });
-      setMsg('#reset-msg', j.message || 'Код отправлен на почту.', true);
-    } catch(e) {
-      setMsg('#reset-msg', e.message, false);
-    }
-  });
+      // ============================================
+      // TABS - with animations
+      // ============================================
 
-  // reset confirm
-  $$('#btn-reset-confirm').addEventListener('click', async () => {
-    setMsg('#reset2-msg','',true);
-    try {
-      const email = $$('#reset-email').value.trim();
-      const code = $$('#reset-code').value.trim();
-      const new_password = $$('#reset-newpass').value;
-      const j = await post('/api/auth/reset/confirm', { email, code, new_password });
-      setMsg('#reset2-msg', j.message || 'Пароль обновлён. Теперь логин.', true);
-    } catch(e) {
-      setMsg('#reset2-msg', e.message, false);
-    }
-  });
-</script>
-</body>
+      document.querySelectorAll(".tabbtn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // Remove active from all tabs
+          document
+            .querySelectorAll(".tabbtn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          const tab = btn.getAttribute("data-tab");
+
+          // Animate out current tab, animate in new tab
+          ["login", "register", "reset"].forEach((t) => {
+            const tabEl = document.getElementById("tab-" + t);
+            if (t === tab) {
+              tabEl.style.display = "block";
+              gsap.fromTo(
+                tabEl,
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+              );
+            } else {
+              tabEl.style.display = "none";
+            }
+          });
+
+          // Tab button animation
+          gsap.from(btn, {
+            scale: 0.9,
+            duration: 0.3,
+            ease: "back.out(1.5)",
+          });
+        });
+      });
+
+      // ============================================
+      // API HELPER
+      // ============================================
+
+      async function post(url, body) {
+        const r = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body || {}),
+        });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.error || "HTTP " + r.status);
+        return j;
+      }
+
+      // ============================================
+      // BUTTON CLICK ANIMATIONS
+      // ============================================
+
+      function animateButton(btn) {
+        gsap.to(btn, {
+          scale: 0.95,
+          duration: 0.1,
+          onComplete: () => {
+            gsap.to(btn, {
+              scale: 1,
+              duration: 0.2,
+              ease: "back.out(2)",
+            });
+          },
+        });
+      }
+
+      // ============================================
+      // REGISTER
+      // ============================================
+
+      $$("#btn-register").addEventListener("click", async function () {
+        animateButton(this);
+        setMsg("#reg-msg", "", true);
+        try {
+          const email = $$("#reg-email").value.trim();
+          const password = $$("#reg-pass").value;
+          const j = await post("/api/auth/register", { email, password });
+          setMsg(
+            "#reg-msg",
+            j.message || "Ок. Проверь почту, введи код ниже.",
+            true
+          );
+        } catch (e) {
+          setMsg("#reg-msg", e.message, false);
+        }
+      });
+
+      // ============================================
+      // VERIFY EMAIL
+      // ============================================
+
+      $$("#btn-verify").addEventListener("click", async function () {
+        animateButton(this);
+        setMsg("#verify-msg", "", true);
+        try {
+          const email = $$("#reg-email").value.trim();
+          const code = $$("#verify-code").value.trim();
+          const j = await post("/api/auth/verify", { email, code });
+          setMsg(
+            "#verify-msg",
+            j.message || "Email подтвержден. Теперь логин.",
+            true
+          );
+        } catch (e) {
+          setMsg("#verify-msg", e.message, false);
+        }
+      });
+
+      // ============================================
+      // LOGIN
+      // ============================================
+
+      $$("#btn-login").addEventListener("click", async function () {
+        animateButton(this);
+        setMsg("#login-msg", "", true);
+        try {
+          const email = $$("#login-email").value.trim();
+          const password = $$("#login-pass").value;
+          const j = await post("/api/auth/login", { email, password });
+          setMsg(
+            "#login-msg",
+            j.message || "Вошёл. Перехожу в приложение...",
+            true
+          );
+
+          // Success animation before redirect
+          gsap.to("#auth-card", {
+            scale: 1.02,
+            boxShadow: "0 0 40px rgba(16, 185, 129, 0.4)",
+            duration: 0.3,
+            onComplete: () => {
+              setTimeout(() => (location.href = "/app"), 300);
+            },
+          });
+        } catch (e) {
+          setMsg("#login-msg", e.message, false);
+
+          // Error shake animation
+          gsap.to("#auth-card", {
+            x: 10,
+            duration: 0.1,
+            repeat: 3,
+            yoyo: true,
+            onComplete: () => {
+              gsap.set("#auth-card", { x: 0 });
+            },
+          });
+        }
+      });
+
+      // ============================================
+      // RESET PASSWORD REQUEST
+      // ============================================
+
+      $$("#btn-reset-request").addEventListener("click", async function () {
+        animateButton(this);
+        setMsg("#reset-msg", "", true);
+        try {
+          const email = $$("#reset-email").value.trim();
+          const j = await post("/api/auth/reset/request", { email });
+          setMsg("#reset-msg", j.message || "Код отправлен на почту.", true);
+        } catch (e) {
+          setMsg("#reset-msg", e.message, false);
+        }
+      });
+
+      // ============================================
+      // RESET PASSWORD CONFIRM
+      // ============================================
+
+      $$("#btn-reset-confirm").addEventListener("click", async function () {
+        animateButton(this);
+        setMsg("#reset2-msg", "", true);
+        try {
+          const email = $$("#reset-email").value.trim();
+          const code = $$("#reset-code").value.trim();
+          const new_password = $$("#reset-newpass").value;
+          const j = await post("/api/auth/reset/confirm", {
+            email,
+            code,
+            new_password,
+          });
+          setMsg(
+            "#reset2-msg",
+            j.message || "Пароль обновлён. Теперь логин.",
+            true
+          );
+        } catch (e) {
+          setMsg("#reset2-msg", e.message, false);
+        }
+      });
+
+      // ============================================
+      // INPUT FOCUS ANIMATIONS
+      // ============================================
+
+      document.querySelectorAll("input").forEach((input) => {
+        input.addEventListener("focus", () => {
+          gsap.to(input, { scale: 1.02, duration: 0.2 });
+        });
+
+        input.addEventListener("blur", () => {
+          gsap.to(input, { scale: 1, duration: 0.2 });
+        });
+      });
+
+      // ============================================
+      // FEATURE CARDS HOVER
+      // ============================================
+
+      document.querySelectorAll(".feat div").forEach((card) => {
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            x: 10,
+            boxShadow: "0 4px 15px rgba(167, 139, 250, 0.2)",
+            duration: 0.3,
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            x: 0,
+            boxShadow: "none",
+            duration: 0.3,
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

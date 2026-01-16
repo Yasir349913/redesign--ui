@@ -3,50 +3,266 @@
 <head>
   <meta charset="UTF-8" />
   <title>Upgrade to PRO — Rulez</title>
+  
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- GSAP Animation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  
   <style>
+    :root {
+      /* Primary Colors */
+      --primary-lilac: #a78bfa;
+      --primary-blue: #3b82f6;
+      --primary-purple: #8b5cf6;
+      
+      /* Light Theme */
+      --bg-primary: #f8fafc;
+      --bg-card: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-light: #e2e8f0;
+      
+      /* Shadows */
+      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+      --shadow-glow-lilac: 0 0 30px rgba(167, 139, 250, 0.4);
+      
+      /* Radius */
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: system-ui, sans-serif;
-      background: #f5f5f7;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f8fafc 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
+    
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, transparent 70%);
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -100px;
+      left: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+      animation: float 10s ease-in-out infinite reverse;
+      pointer-events: none;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+    
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
     .box {
-      background: white;
-      padding: 32px;
-      border-radius: 12px;
-      max-width: 420px;
+      background: var(--bg-card);
+      padding: 48px 40px;
+      border-radius: var(--radius-xl);
+      max-width: 480px;
       text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,.1);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-light);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
     }
+    
+    /* Decorative gradient corner */
+    .box::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(59, 130, 246, 0.1));
+      border-radius: 50%;
+    }
+    
+    .box h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .box p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(59, 130, 246, 0.1));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 36px;
+      position: relative;
+      z-index: 1;
+    }
+    
     button {
-      margin-top: 20px;
-      padding: 12px 20px;
-      border-radius: 8px;
+      margin-top: 8px;
+      padding: 16px 32px;
+      border-radius: var(--radius-lg);
       border: none;
-      background: #16a34a;
+      background: linear-gradient(135deg, var(--primary-lilac), var(--primary-purple), var(--primary-blue));
+      background-size: 200% 200%;
       color: white;
       font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
       cursor: pointer;
+      width: 100%;
+      transition: all 0.3s ease;
+      animation: gradient-shift 4s ease infinite;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.5s, height 0.5s;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-glow-lilac);
+    }
+    
+    button:hover::before {
+      width: 400px;
+      height: 400px;
+    }
+    
+    button:active {
+      transform: translateY(-1px);
+    }
+    
+    #continue-fb {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 2px solid var(--border-light);
+      animation: none;
+    }
+    
+    #continue-fb:hover {
+      border-color: var(--primary-lilac);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
 <body>
-  <div class="box">
-<h2 data-i18n="pw_title">Требуется PRO</h2>
-<p data-i18n="pw_text">
-  Этот Facebook аккаунт уже использовался ранее.<br />
-  Повторное подключение доступно на PRO тарифе.
-</p>
+  <div class="box" id="paywall-box">
+    <div class="icon">🔒</div>
+    <h2 data-i18n="pw_title">Требуется PRO</h2>
+    <p data-i18n="pw_text">
+      Этот Facebook аккаунт уже использовался ранее.<br />
+      Повторное подключение доступно на PRO тарифе.
+    </p>
 
-<button id="go-pro" data-i18n="pw_go_pro">Активировать PRO</button>
-<button id="continue-fb" style="display:none;margin-top:12px" data-i18n="pw_continue">
-  Продолжить подключение Facebook
-</button>
+    <button id="go-pro" data-i18n="pw_go_pro">Активировать PRO</button>
+    <button id="continue-fb" style="display:none;margin-top:12px" data-i18n="pw_continue">
+      Продолжить подключение Facebook
+    </button>
   </div>
 
 <script>
+  // ============================================
+  // GSAP ENTRANCE ANIMATION
+  // ============================================
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    gsap.to('#paywall-box', {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      ease: 'power3.out',
+      delay: 0.2
+    });
+    
+    gsap.from('.icon', {
+      scale: 0,
+      rotation: -180,
+      duration: 0.6,
+      ease: 'back.out(1.5)',
+      delay: 0.5
+    });
+    
+    gsap.from('.box h2, .box p', {
+      opacity: 0,
+      y: 20,
+      stagger: 0.15,
+      duration: 0.5,
+      delay: 0.7
+    });
+    
+    gsap.from('#go-pro', {
+      opacity: 0,
+      y: 20,
+      duration: 0.5,
+      delay: 1
+    });
+  });
+
+  // ============================================
+  // TRANSLATIONS
+  // ============================================
+  
   const dict = {
     ru: {
       pw_title: 'Требуется PRO',
@@ -75,12 +291,28 @@
     }
   });
 
-  // ✅ объявляем кнопки
+  // ============================================
+  // BUTTON HANDLERS
+  // ============================================
+  
   const goProBtn = document.getElementById('go-pro');
   const contBtn  = document.getElementById('continue-fb');
 
   goProBtn.onclick = async (e) => {
     e.preventDefault();
+    
+    // Click animation
+    gsap.to(goProBtn, {
+      scale: 0.95,
+      duration: 0.1,
+      onComplete: () => {
+        gsap.to(goProBtn, {
+          scale: 1,
+          duration: 0.2,
+          ease: 'back.out(2)'
+        });
+      }
+    });
 
     const resp = await fetch('/api/app/select-plan', {
       method: 'POST',
@@ -93,21 +325,49 @@
 
     if (!resp.ok) {
       alert(j.error || d.pw_err_activate);
+      
+      // Error shake
+      gsap.to('#paywall-box', {
+        x: 10,
+        duration: 0.1,
+        repeat: 3,
+        yoyo: true,
+        onComplete: () => {
+          gsap.set('#paywall-box', { x: 0 });
+        }
+      });
       return;
     }
 
-    // ✅ открыть оплату в /app
+    // Success - open payment
     if (j && j.open_payment) {
-      window.location.href = '/app?open_payment=1';
+      // Success animation
+      gsap.to('#paywall-box', {
+        scale: 1.05,
+        boxShadow: '0 0 40px rgba(16, 185, 129, 0.4)',
+        duration: 0.3,
+        onComplete: () => {
+          window.location.href = '/app?open_payment=1';
+        }
+      });
       return;
     }
 
-    // fallback
-    goProBtn.style.display = 'none';
-    contBtn.style.display = 'inline-block';
+    // Fallback - show continue button
+    gsap.to(goProBtn, {
+      opacity: 0,
+      y: -10,
+      duration: 0.3,
+      onComplete: () => {
+        goProBtn.style.display = 'none';
+        contBtn.style.display = 'inline-block';
+        gsap.fromTo(contBtn, 
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.3 }
+        );
+      }
+    });
   };
 </script>
-
-
 </body>
 </html>
