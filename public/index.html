@@ -462,109 +462,101 @@
 
 <!-- ===== Billing Modal (shared) ===== -->
 <div id="bill-modal" class="modal hidden">
-  <div class="modal-backdrop" id="bill-backdrop"></div>
-
-  <div class="modal-content bill-modal-content" style="max-width:760px;">
-
+  <div class="modal-content" style="max-width:760px;">
     <div class="modal-header">
       <div class="modal-title" id="bill-title">PRO subscription</div>
       <button id="bill-close" class="secondary-btn small">✕</button>
     </div>
 
-    <!-- ✅ NEW: scroll wrapper (NO existing ids/classes changed) -->
-    <div class="bill-modal-scroll">
+    <div class="muted" id="bill-desc" style="margin-top:6px;">
+      Amount is fixed and cannot be edited.
+    </div>
 
-      <div class="muted" id="bill-desc" style="margin-top:6px;">
-        Amount is fixed and cannot be edited.
+    <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+      <div style="min-width:200px;">
+        <div class="muted" style="margin-bottom:6px;">Amount</div>
+        <div style="font-size:28px; font-weight:700;">
+          <span id="bill-amount">$10</span>
+        </div>
       </div>
 
-      <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
-        <div style="min-width:200px;">
-          <div class="muted" style="margin-bottom:6px;">Amount</div>
-          <div style="font-size:28px; font-weight:700;">
-            <span id="bill-amount">$10</span>
-          </div>
+<div style="min-width:420px; flex:1;">
+  <div class="muted" style="margin-bottom:6px;">Pay with</div>
+
+  <!-- скрытое поле: сюда JS будет писать выбранную валюту -->
+  <input type="hidden" id="bill-currency" value="USDTTRC20">
+
+  <div class="bill-pay-grid" id="bill-pay-grid">
+<button type="button" class="bill-pay-card active" data-currency="USDTTRC20">
+  <img class="bill-pay-logo" src="/img/usdt.png" alt="USDT">
+  <div class="bill-pay-text">
+    <div class="bill-pay-name">USDT TRC20</div>
+    <div class="bill-pay-sub">Recommended</div>
+  </div>
+</button>
+
+<button type="button" class="bill-pay-card" data-currency="USDTBSC">
+  <img class="bill-pay-logo" src="/img/bep.png" alt="BEP">
+  <div class="bill-pay-text">
+    <div class="bill-pay-name">USDT BEP20</div>
+    <div class="bill-pay-sub">Low fees</div>
+  </div>
+</button>
+
+<button type="button" class="bill-pay-card" data-currency="BTC">
+  <img class="bill-pay-logo" src="/img/btc.png" alt="BTC">
+  <div class="bill-pay-text">
+    <div class="bill-pay-name">Bitcoin</div>
+    <div class="bill-pay-sub">BTC</div>
+  </div>
+</button>
+
+  </div>
+</div>
+
+
+      <button id="bill-create" class="primary-btn">Create invoice</button>
+    </div>
+
+    <div id="bill-stage" style="margin-top:16px;" class="hidden">
+      <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start;">
+        <div style="min-width:220px;">
+          <div class="muted" style="margin-bottom:6px;">QR</div>
+          <img id="bill-qr" alt="QR" style="width:220px; height:220px; border-radius:12px; background:#fff;" />
         </div>
 
-        <div style="min-width:420px; flex:1;">
-          <div class="muted" style="margin-bottom:6px;">Pay with</div>
-
-          <!-- скрытое поле: сюда JS будет писать выбранную валюту -->
-          <input type="hidden" id="bill-currency" value="USDTTRC20">
-
-          <div class="bill-pay-grid" id="bill-pay-grid">
-            <button type="button" class="bill-pay-card active" data-currency="USDTTRC20">
-              <img class="bill-pay-logo" src="/img/usdt.png" alt="USDT">
-              <div class="bill-pay-text">
-                <div class="bill-pay-name">USDT TRC20</div>
-                <div class="bill-pay-sub">Recommended</div>
-              </div>
-            </button>
-
-            <button type="button" class="bill-pay-card" data-currency="USDTBSC">
-              <img class="bill-pay-logo" src="/img/bep.png" alt="BEP">
-              <div class="bill-pay-text">
-                <div class="bill-pay-name">USDT BEP20</div>
-                <div class="bill-pay-sub">Low fees</div>
-              </div>
-            </button>
-
-            <button type="button" class="bill-pay-card" data-currency="BTC">
-              <img class="bill-pay-logo" src="/img/btc.png" alt="BTC">
-              <div class="bill-pay-text">
-                <div class="bill-pay-name">Bitcoin</div>
-                <div class="bill-pay-sub">BTC</div>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <button id="bill-create" class="primary-btn">Create invoice</button>
-      </div>
-
-      <div id="bill-stage" style="margin-top:16px;" class="hidden">
-        <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start;">
-          <div style="min-width:220px;">
-            <div class="muted" style="margin-bottom:6px;">QR</div>
-            <img id="bill-qr" alt="QR" style="width:220px; height:220px; border-radius:12px; background:#fff;" />
+        <div style="flex:1; min-width:280px;">
+          <div class="muted" style="margin-bottom:6px;">Address</div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <input id="bill-address" class="input" style="width:100%;" readonly />
+            <button id="bill-copy" class="secondary-btn small">📋</button>
           </div>
 
-          <div style="flex:1; min-width:280px;">
-            <div class="muted" style="margin-bottom:6px;">Address</div>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <input id="bill-address" class="input" style="width:100%;" readonly />
-              <button id="bill-copy" class="secondary-btn small">📋</button>
-            </div>
+          <div class="muted" style="margin:12px 0 6px;">Amount to send</div>
+          <input id="bill-pay-amount" class="input" readonly />
 
-            <div class="muted" style="margin:12px 0 6px;">Amount to send</div>
-            <input id="bill-pay-amount" class="input" readonly />
+          <div class="muted" style="margin:12px 0 6px;">Status</div>
+          <div id="bill-status" class="muted">pending</div>
 
-            <div class="muted" style="margin:12px 0 6px;">Status</div>
-            <div id="bill-status" class="muted">pending</div>
+          <div class="muted" style="margin:10px 0 0;">
+            Expires in: <span id="bill-expires">—</span>
+          </div>
 
-            <div class="muted" style="margin:10px 0 0;">
-              Expires in: <span id="bill-expires">—</span>
-            </div>
+<div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+  <button id="bill-check" class="secondary-btn">Check payment</button>
+  <button type="button" id="bill-cancel" class="bill-btn-secondary">
+    Cancel invoice
+  </button>
+</div>
 
-            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-              <button id="bill-check" class="secondary-btn">Check payment</button>
-              <button type="button" id="bill-cancel" class="bill-btn-secondary">
-                Cancel invoice
-              </button>
-            </div>
-
-            <div id="bill-status-text" class="bill-hint" style="margin-top:8px;"></div>
+<div id="bill-status-text" class="bill-hint" style="margin-top:8px;"></div>
           </div>
 
           <div id="bill-hint" class="muted" style="margin-top:10px;"></div>
         </div>
       </div>
-
-    </div><!-- ✅ /bill-modal-scroll -->
-
+    </div>
   </div>
-</div>
-
 </div>
 
 <div id="ui-modal" class="ui-modal hidden">
