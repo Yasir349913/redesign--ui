@@ -1,4 +1,40 @@
 // ====== i18n ======
+// Logo Loader Init
+(function initLogoLoader() {
+  if (document.getElementById("logo-loader")) return;
+  const loaderHTML = `
+    <div id="logo-loader" class="logo-loader">
+      <div class="logo-loader__icon">
+        <div class="logo-loader__ring"></div>
+        <div class="logo-loader__ring-2"></div>
+        <img src="images/logo-img2.png" alt="Loading" class="logo-loader__img">
+      </div>
+      <div class="logo-loader__text">
+        <span id="loader-text">Loading</span>
+        <span class="logo-loader__dots">
+          <span class="logo-loader__dot"></span>
+          <span class="logo-loader__dot"></span>
+          <span class="logo-loader__dot"></span>
+        </span>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML("beforeend", loaderHTML);
+})();
+
+function showLoader(text = "Loading") {
+  const loader = document.getElementById("logo-loader");
+  const loaderText = document.getElementById("loader-text");
+  if (loader) {
+    if (loaderText) loaderText.textContent = text;
+    loader.classList.add("active");
+  }
+}
+
+function hideLoader() {
+  const loader = document.getElementById("logo-loader");
+  if (loader) loader.classList.remove("active");
+}
 let SAAS_BLOCKED = false;
 document.documentElement.classList.add("gsap-ready");
 
@@ -293,10 +329,10 @@ const ruleLevelSelect = document.getElementById("rule-level");
 const ruleTimeframeSelect = document.getElementById("rule-timeframe");
 const ruleScheduleTypeSelect = document.getElementById("rule-schedule-type");
 const ruleScheduleDatetimeInput = document.getElementById(
-  "rule-schedule-datetime"
+  "rule-schedule-datetime",
 );
 const scheduleDatetimeWrapper = document.getElementById(
-  "schedule-datetime-wrapper"
+  "schedule-datetime-wrapper",
 );
 
 const loadAccountsBtn = document.getElementById("load-accounts-btn");
@@ -315,7 +351,7 @@ const budgetCapInput = document.getElementById("rule-budget-cap");
 const conditionsContainer = document.getElementById("conditions-container");
 const addConditionBtn = document.getElementById("add-condition-btn");
 const conditionGroupsContainer = document.getElementById(
-  "conditions-groups-container"
+  "conditions-groups-container",
 );
 const addConditionGroupBtn = document.getElementById("add-condition-group-btn");
 const ruleSaveBtn = document.getElementById("rule-save-btn");
@@ -562,7 +598,7 @@ function billApplyInvoiceUI(inv) {
 
   document.getElementById("bill-address").value = inv.pay_address || "";
   document.getElementById("bill-pay-amount").value = String(
-    inv.pay_amount || ""
+    inv.pay_amount || "",
   );
 
   // QR
@@ -974,7 +1010,7 @@ async function billCheckStatus(silent) {
       alert(
         isRu
           ? "Оплата подтверждена. PRO активирован."
-          : "Payment confirmed. PRO activated."
+          : "Payment confirmed. PRO activated.",
       );
 
       // 1) Обновим план
@@ -1015,7 +1051,7 @@ function updateGroupActionVisibility(
   actionSelect,
   valueInput,
   capInput,
-  maxChangesInput
+  maxChangesInput,
 ) {
   if (!actionSelect) return;
 
@@ -1100,12 +1136,12 @@ function rebuildConditionGroupDividers() {
   if (!conditionGroupsContainer) return;
 
   const oldDivs = conditionGroupsContainer.querySelectorAll(
-    ".condition-group-divider"
+    ".condition-group-divider",
   );
   oldDivs.forEach((el) => el.remove());
 
   const groups = Array.from(
-    conditionGroupsContainer.querySelectorAll(".condition-group")
+    conditionGroupsContainer.querySelectorAll(".condition-group"),
   );
   if (!groups.length) return;
 
@@ -1135,7 +1171,7 @@ function updateConditionGroupTitles() {
 
   const dividerLabel = i18n[currentLang].group_or_label || "ИЛИ";
   const divs = conditionGroupsContainer.querySelectorAll(
-    ".condition-group-divider"
+    ".condition-group-divider",
   );
   divs.forEach((d) => {
     d.textContent = dividerLabel;
@@ -1374,8 +1410,8 @@ async function apiJson(url, method, body) {
     const lr = isAntifraud
       ? "antifraud_farm_reuse"
       : isExpired
-      ? "expired"
-      : "pro_required";
+        ? "expired"
+        : "pro_required";
 
     // reason для дебага/логов (оставляем как у тебя)
     const billingReason = isAntifraud
@@ -1383,8 +1419,8 @@ async function apiJson(url, method, body) {
         ? codeUp
         : "ANTIFRAUD_FARM_REUSE"
       : isExpired
-      ? "PLAN_EXPIRED"
-      : "PRO_REQUIRED";
+        ? "PLAN_EXPIRED"
+        : "PRO_REQUIRED";
 
     try {
       localStorage.setItem("lockToBilling", "1");
@@ -1495,7 +1531,7 @@ document.addEventListener(
       window.location.href = "/";
     }, 150);
   },
-  true
+  true,
 ); // <-- capture true (очень важно)
 
 if (langToggle) {
@@ -1519,7 +1555,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "gsap-slide-up",
       "gsap-slide-down",
       "gsap-fade-in",
-      "gsap-scale-in"
+      "gsap-scale-in",
     );
 
     // Force immediate visibility
@@ -1529,7 +1565,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ✅ 2. Ensure all tab content containers have consistent width
   const tabContents = document.querySelectorAll(
-    "#tab-rules, #tab-logs, #tab-billing, #tab-creatives"
+    "#tab-rules, #tab-logs, #tab-billing, #tab-creatives",
   );
 
   tabContents.forEach((content) => {
@@ -1653,7 +1689,7 @@ function renderRules() {
         try {
           const res = await apiJson(
             `/api/rules/${rule.id}/toggle-status`,
-            "POST"
+            "POST",
           );
           if (res && res.status) {
             rule.status = res.status;
@@ -1742,8 +1778,8 @@ function renderLogs() {
       log.affected_objects != null
         ? log.affected_objects
         : log.affected != null
-        ? log.affected
-        : 0;
+          ? log.affected
+          : 0;
 
     const affectedLabel = i18n[currentLang].logs_affected;
 
@@ -1802,7 +1838,7 @@ async function openRuleModal(rule) {
     if (rule.schedule_type === "once" && rule.schedule_datetime) {
       scheduleDatetimeWrapper.classList.remove("hidden");
       ruleScheduleDatetimeInput.value = timestampToInputValue(
-        rule.schedule_datetime
+        rule.schedule_datetime,
       );
     } else {
       scheduleDatetimeWrapper.classList.add("hidden");
@@ -1912,7 +1948,7 @@ async function openRuleModal(rule) {
         addConditionGroup({
           action: g && g.action ? g.action : {},
           conditions: Array.isArray(g?.conditions) ? g.conditions : [],
-        })
+        }),
       );
     } else {
       addConditionGroup(null);
@@ -1954,14 +1990,14 @@ if (ruleModal) {
 // ====== accounts & campaigns ======
 async function loadAccounts(
   preselectedAccounts = [],
-  preselectedCampaigns = []
+  preselectedCampaigns = [],
 ) {
   try {
     if (window.__me?.expired) {
       alert(
         currentLang === "ru"
           ? "Ваш план PRO истёк. Пожалуйста, оформите подписку для продолжения работы."
-          : "Your PRO plan has expired. Please upgrade your subscription to continue."
+          : "Your PRO plan has expired. Please upgrade your subscription to continue.",
       );
       return;
     }
@@ -2057,7 +2093,7 @@ function applyRuleAccountLimit() {
       cb.closest("label")?.style && (cb.closest("label").style.opacity = "0.6");
       cb.closest("label")?.setAttribute(
         "title",
-        `Лимит аккаунтов: ${checked}/${maxAcc}`
+        `Лимит аккаунтов: ${checked}/${maxAcc}`,
       );
     } else {
       cb.disabled = false;
@@ -2103,7 +2139,7 @@ function renderAccounts(preselected = []) {
 
 async function loadCampaigns(
   preselectedAccounts = null,
-  preselectedCampaigns = []
+  preselectedCampaigns = [],
 ) {
   const selectedAccountIds =
     preselectedAccounts && preselectedAccounts.length
@@ -2116,7 +2152,7 @@ async function loadCampaigns(
   for (const accId of selectedAccountIds) {
     try {
       const data = await apiGet(
-        `/api/campaigns?account_id=${encodeURIComponent(accId)}`
+        `/api/campaigns?account_id=${encodeURIComponent(accId)}`,
       );
       const activeSet = new Set(data.active_ids || []);
       (data.campaigns || []).forEach((c) => {
@@ -2185,13 +2221,13 @@ function renderCampaigns(preselected = []) {
 
 function getSelectedAccountIds() {
   return Array.from(
-    accountsContainer.querySelectorAll('input[type="checkbox"]:checked')
+    accountsContainer.querySelectorAll('input[type="checkbox"]:checked'),
   ).map((el) => el.value);
 }
 
 function getSelectedCampaignIds() {
   return Array.from(
-    campaignsContainer.querySelectorAll('input[type="checkbox"]:checked')
+    campaignsContainer.querySelectorAll('input[type="checkbox"]:checked'),
   ).map((el) => el.value);
 }
 
@@ -2407,7 +2443,7 @@ function addConditionGroup(existingGroup = null) {
       actionSelect,
       actionValueInput,
       actionCapInput,
-      actionMaxChangesInput
+      actionMaxChangesInput,
     );
   });
 
@@ -2484,7 +2520,7 @@ function addConditionGroup(existingGroup = null) {
     actionSelect,
     actionValueInput,
     actionCapInput,
-    actionMaxChangesInput
+    actionMaxChangesInput,
   );
   rebuildConditionGroupDividers();
   updateConditionGroupTitles();
@@ -2503,7 +2539,7 @@ function collectConditionGroupsFromDom() {
     const actionCapEl = groupEl.querySelector(".group-action-cap");
     const condContainer = groupEl.querySelector(".conditions-container");
     const actionMaxChangesEl = groupEl.querySelector(
-      ".group-action-max-changes"
+      ".group-action-max-changes",
     );
 
     const actionType = actionTypeEl ? actionTypeEl.value : "pause";
@@ -2572,17 +2608,21 @@ if (addConditionGroupBtn) {
 
 // ====== save / delete / run rule ======
 // ====== save / delete / run rule ======
+// ====== save / delete / run rule ======
 if (ruleSaveBtn) {
   ruleSaveBtn.addEventListener("click", async () => {
+    // === 1. Проверяем выбранную farm ===
+    const connIds = getSelectedRuleConnIds();
+
+    if (!connIds.length) {
+      alert("Выбери соц-аккаунт");
+      return;
+    }
+
+    // ✅ LOADER START
+    showLoader("Сохранение правила...");
+
     try {
-      // === 1. Проверяем выбранную farm ===
-      const connIds = getSelectedRuleConnIds();
-
-      if (!connIds.length) {
-        alert("Выбери соц-аккаунт");
-        return;
-      }
-
       // === 3. Собираем данные правила ===
       const name = ruleNameInput.value || "Rule";
       const level = ruleLevelSelect.value;
@@ -2655,18 +2695,26 @@ if (ruleSaveBtn) {
       }
 
       alert(i18n[currentLang].save_error);
+    } finally {
+      // ✅ LOADER END
+      hideLoader();
     }
   });
 }
 
 async function deleteRule(ruleId) {
   if (!confirm(i18n[currentLang].delete_confirm)) return;
+
+  showLoader("Удаление правила..."); // ✅ ADD
+
   try {
     await apiJson(`/api/rules/${ruleId}`, "DELETE");
     await loadRules();
   } catch (e) {
     alert(i18n[currentLang].delete_error);
     console.error(e);
+  } finally {
+    hideLoader(); // ✅ ADD
   }
 }
 function parseJsonArray(v) {
@@ -2680,6 +2728,8 @@ function parseJsonArray(v) {
 
 // ====== data loading ======
 async function loadMe() {
+  showLoader("Loading..."); // ✅ LOADER ADDED
+
   try {
     const me = await apiGet("/api/app/me");
 
@@ -2713,7 +2763,11 @@ async function loadMe() {
       const appMe = await getAppMe();
       if (appMe?.email) userInfoEl.textContent = appMe.email;
     } catch {}
+
+    hideLoader(); // ✅ LOADER ADDED
   } catch (e) {
+    hideLoader(); // ✅ LOADER ADDED
+
     // SaaS-сессия потеряна → сразу на логин
     if (e.code === "SAAS_NOT_AUTH" || e.error === "Not authenticated") {
       console.warn("SaaS session lost in loadMe");
@@ -2729,15 +2783,22 @@ async function loadMe() {
 renderConnectionsDropdown();
 
 async function loadRules() {
+  showLoader("Загрузка правил..."); // ✅ LOADER ADDED
+
   try {
     const data = await apiGet("/api/rules");
     rules = data.rules || [];
     renderRules();
+
     // ✅ cache last good rules list for read-only expired mode
     try {
       localStorage.setItem("rulesCache", JSON.stringify(rules || []));
     } catch (e) {}
+
+    hideLoader(); // ✅ LOADER ADDED
   } catch (e) {
+    hideLoader(); // ✅ LOADER ADDED
+
     console.error("loadRules error:", e);
 
     if (e.code === "SAAS_NOT_AUTH") {
@@ -2748,23 +2809,26 @@ async function loadRules() {
 }
 
 async function loadLogs() {
+  showLoader("Загрузка логов...");
+
   try {
     const data = await apiGet("/api/logs");
     logs = data.logs || [];
     renderLogs();
+    hideLoader();
   } catch (e) {
-    // если SaaS-сессия умерла
+    hideLoader();
+
     if (e.code === "SAAS_NOT_AUTH" || e.error === "Not authenticated") {
       console.warn("SaaS session lost in loadLogs");
       showLogin();
       return;
     }
 
-    // если позже появится отдельный код типа FB_NOT_SELECTED —
-    // здесь можно будет его обработать
     console.error("loadLogs error:", e);
   }
 }
+
 function showTrialModal(appMe) {
   if (document.getElementById("trial-modal")) return;
 
@@ -2833,265 +2897,164 @@ function showTrialModal(appMe) {
   });
 }
 
+// =========================================
+// REPLACE YOUR showPlanSelectModal() FUNCTION WITH THIS
+// Find it around line 2800-3100 in app.js
+// =========================================
+
 function showPlanSelectModal(opts = {}) {
   const force = opts.force === true;
   if (document.getElementById("plan-modal")) return;
 
-  const isRu =
-    (typeof currentLang !== "undefined" ? currentLang : "ru") === "ru";
+  const isRu = (typeof currentLang !== "undefined" ? currentLang : "ru") === "ru";
 
   const overlay = document.createElement("div");
   overlay.id = "plan-modal";
-  overlay.style.cssText = `
-    position:fixed; inset:0;
-    background:rgba(0,0,0,.65);
-    backdrop-filter: blur(6px);
-    display:flex; align-items:center; justify-content:center;
-    z-index:9999;
-    padding:22px;
-  `;
+  overlay.className = "modal"; // ✅ Use class instead of inline styles
 
   overlay.innerHTML = `
-    <div style="
-      width:min(1080px, 96vw);
-      background:#0b0f19;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:22px;
-      padding:18px;
-      color:#e5e7eb;
-      box-shadow: 0 18px 60px rgba(0,0,0,.55);
-    ">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+    <div class="modal-content">
+      
+      <!-- Header -->
+      <div class="modal-header">
         <div>
-          <div style="font-size:22px;font-weight:800;letter-spacing:.2px">
+          <div class="modal-title">
             ${isRu ? "Выберите план" : "Choose your plan"}
           </div>
-          <div style="margin-top:6px;color:rgba(229,231,235,.72);font-size:13.5px;line-height:1.35">
-            ${
-              isRu
-                ? "Можно начать с Trial. PRO можно активировать в любой момент."
-                : "Start with Trial. You can upgrade to PRO anytime."
-            }
+          <div class="modal-subtitle">
+            ${isRu 
+              ? "Можно начать с Trial. PRO можно активировать в любой момент."
+              : "Start with Trial. You can upgrade to PRO anytime."}
           </div>
         </div>
-        <button id="plan-x" aria-label="Close" style="
-          border:1px solid rgba(255,255,255,.12);
-          background:rgba(255,255,255,.06);
-          color:#e5e7eb;
-          border-radius:12px;
-          padding:8px 10px;
-          cursor:pointer;
-          line-height:1;
-          font-size:14px;
-        ">✕</button>
+        <button id="plan-x" aria-label="Close" class="icon-btn">✕</button>
       </div>
 
-      <div style="
-        display:grid;
-        grid-template-columns: 1fr 1.08fr;
-        gap:14px;
-      " id="plan-grid">
+      <!-- Plan Grid -->
+      <div id="plan-grid">
 
         <!-- TRIAL CARD -->
-        <div style="
-          background:#ffffff;
-          color:#0b1220;
-          border:1px solid #e5e7eb;
-          border-radius:20px;
-          padding:18px 18px 16px;
-          position:relative;
-          overflow:hidden;
-        ">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-            <div style="font-size:18px;font-weight:800">Trial</div>
-            <div style="
-              font-size:12px;
-              font-weight:700;
-              padding:6px 10px;
-              border-radius:999px;
-              background:#eef2ff;
-              color:#1e293b;
-            ">
+        <div class="plan-card plan-card-trial">
+          <div class="plan-top">
+            <div class="plan-name">Trial</div>
+            <div class="plan-pill">
               ${isRu ? "Бесплатно" : "Free"}
             </div>
           </div>
 
-          <div style="margin-top:10px;font-size:13.5px;color:#334155">
+          <div class="plan-subtitle">
             ${isRu ? "5 дней доступа" : "5 days access"}
           </div>
 
-          <div style="margin-top:14px;font-size:13.5px;color:#0b1220;font-weight:800">
+          <div class="plan-section-title">
             ${isRu ? "Лимиты" : "Limits"}
           </div>
 
-          <ul style="margin:10px 0 0; padding-left:18px; color:#334155; font-size:13.5px; line-height:1.55">
+          <ul class="plan-features">
             <li>${isRu ? "2 соц-аккаунта" : "2 social accounts"}</li>
-            <li>${
-              isRu ? "до 6 рекламных кабинетов" : "up to 6 ad accounts"
-            }</li>
-            <li>${
-              isRu
-                ? "базовые функции (правила/креативы)"
-                : "basic features (rules/creatives)"
-            }</li>
+            <li>${isRu ? "до 6 рекламных кабинетов" : "up to 6 ad accounts"}</li>
+            <li>${isRu 
+              ? "базовые функции (правила/креативы)"
+              : "basic features (rules/creatives)"}</li>
           </ul>
 
-          <button id="plan-trial" class="btn" style="
-            width:100%;
-            margin-top:16px;
-            border:0;
-            border-radius:999px;
-            padding:12px 14px;
-            font-weight:900;
-            cursor:pointer;
-            background:#facc15;
-            color:#111827;
-            box-shadow: 0 10px 26px rgba(250,204,21,.28);
-          ">
+          <button id="plan-trial" class="plan-btn">
             ${isRu ? "Начать Trial" : "Start Trial"}
           </button>
 
-          <div style="margin-top:10px;font-size:12.5px;color:#64748b;text-align:center">
+          <div class="plan-note">
             ${isRu ? "Можно перейти на PRO в любой момент" : "Upgrade anytime"}
           </div>
         </div>
 
-        <!-- PRO CARD (HIGHLIGHT) -->
-        <div style="
-          background:linear-gradient(180deg, #0f1116 0%, #0b1220 100%);
-          border:1px solid rgba(250,204,21,.35);
-          border-radius:22px;
-          padding:18px 18px 16px;
-          position:relative;
-          overflow:hidden;
-          box-shadow: 0 16px 46px rgba(0,0,0,.55);
-        ">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div style="font-size:18px;font-weight:900;color:#fff">Pro</div>
-              <div style="
-                font-size:12px;
-                font-weight:900;
-                padding:6px 10px;
-                border-radius:999px;
-                background:#facc15;
-                color:#111827;
-              ">
+        <!-- PRO CARD -->
+        <div class="plan-card plan-card-pro">
+          <div class="plan-top">
+            <div>
+              <div class="plan-name">Pro</div>
+              <div class="plan-pill plan-pill-gold">
                 ${isRu ? "Лучший выбор" : "Most popular"}
               </div>
             </div>
-            <div style="text-align:right">
-              <div style="font-size:30px;font-weight:950;color:#fff;line-height:1">10$</div>
-              <div style="margin-top:4px;font-size:12.5px;color:rgba(229,231,235,.72)">
-                ${
-                  isRu
-                    ? "Действует 30 дней после оплаты"
-                    : "Valid for 30 days after payment"
-                }
+            <div class="plan-price-section">
+              <div class="plan-price">$10</div>
+              <div class="plan-price-sub">
+                ${isRu 
+                  ? "Действует 30 дней после оплаты"
+                  : "Valid for 30 days after payment"}
               </div>
             </div>
           </div>
 
-          <div style="margin-top:14px;font-size:13.5px;color:rgba(229,231,235,.92);font-weight:800">
+          <div class="plan-section-title">
             ${isRu ? "Лимиты" : "Limits"}
           </div>
 
-          <ul style="margin:10px 0 0; padding-left:18px; color:rgba(229,231,235,.78); font-size:13.5px; line-height:1.6">
+          <ul class="plan-features">
             <li>${isRu ? "5 соц-аккаунтов" : "5 social accounts"}</li>
-            <li>${
-              isRu ? "до 50 рекламных кабинетов" : "up to 50 ad accounts"
-            }</li>
-            <li>${
-              isRu
-                ? "все функции + без ограничений"
-                : "all features + no limits"
-            }</li>
+            <li>${isRu ? "до 50 рекламных кабинетов" : "up to 50 ad accounts"}</li>
+            <li>${isRu 
+              ? "все функции + без ограничений"
+              : "all features + no limits"}</li>
           </ul>
 
-          <button id="plan-pro" class="btn" style="
-            width:100%;
-            margin-top:16px;
-            border:0;
-            border-radius:999px;
-            padding:12px 14px;
-            font-weight:950;
-            cursor:pointer;
-            background:#facc15;
-            color:#111827;
-            box-shadow: 0 12px 30px rgba(250,204,21,.26);
-          ">
+          <button id="plan-pro" class="plan-btn plan-btn-primary">
             ${isRu ? "Активировать PRO" : "Activate PRO"}
           </button>
 
-          <div style="margin-top:10px;font-size:12.5px;color:rgba(229,231,235,.70);text-align:center">
-            ${
-              isRu
-                ? "Оплата USDT TRC20, USDT BEP20, BTC"
-                : "Crypto payment with USDT TRC20, USDT BEP20, BTC"
-            }
+          <div class="plan-note">
+            ${isRu 
+              ? "Оплата USDT TRC20, USDT BEP20, BTC"
+              : "Crypto payment with USDT TRC20, USDT BEP20, BTC"}
           </div>
         </div>
 
       </div>
 
-      <div id="plan-err" style="
-        margin-top:12px;
-        padding:10px 12px;
-        border-radius:12px;
-        background:rgba(239,68,68,.10);
-        border:1px solid rgba(239,68,68,.25);
-        color:#fb7185;
-        display:none;
-        font-size:13px;
-      "></div>
+      <!-- Error Message -->
+      <div id="plan-err" class="plan-error hidden"></div>
     </div>
   `;
 
   document.body.appendChild(overlay);
 
-  // responsive: 1 column on small screens
-  try {
-    const grid = overlay.querySelector("#plan-grid");
-    const applyResponsive = () => {
-      if (!grid) return;
-      grid.style.gridTemplateColumns =
-        window.innerWidth < 860 ? "1fr" : "1fr 1.08fr";
-    };
-    applyResponsive();
-    window.addEventListener("resize", applyResponsive, { passive: true });
-
-    // close button (disabled when force=true)
-    const xBtn = overlay.querySelector("#plan-x");
-    if (force && xBtn) {
-      xBtn.style.display = "none"; // прячем крестик
+  // Responsive handler
+  const grid = overlay.querySelector("#plan-grid");
+  const applyResponsive = () => {
+    if (!grid) return;
+    if (window.innerWidth < 860) {
+      grid.style.gridTemplateColumns = "1fr";
     } else {
-      xBtn?.addEventListener("click", () => {
-        try {
-          window.removeEventListener("resize", applyResponsive);
-        } catch (e) {}
-        overlay.remove();
-      });
+      grid.style.gridTemplateColumns = "1fr 1.15fr";
     }
-    // block ESC when force=true
-    const onKey = (e) => {
-      if (!force) return;
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-    window.addEventListener("keydown", onKey, true);
+  };
+  applyResponsive();
+  window.addEventListener("resize", applyResponsive, { passive: true });
 
-    // optional: close on overlay click (if you want). For now: NO (to force choice)
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) {
-        // do nothing (force choice)
-      }
+  // Close button
+  const xBtn = overlay.querySelector("#plan-x");
+  if (force && xBtn) {
+    xBtn.style.display = "none";
+  } else {
+    xBtn?.addEventListener("click", () => {
+      window.removeEventListener("resize", applyResponsive);
+      overlay.remove();
     });
-  } catch (e) {}
+  }
+
+  // Block ESC when forced
+  const onKey = (e) => {
+    if (!force) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+  window.addEventListener("keydown", onKey, true);
 
   const err = overlay.querySelector("#plan-err");
 
+  // Plan selection handler
   async function select(plan) {
     try {
       const r = await fetch("/api/app/select-plan", {
@@ -3104,10 +3067,7 @@ function showPlanSelectModal(opts = {}) {
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || "Failed");
 
-      // ✅ PRO → открыть оплату
       if (j && j.open_payment) {
-        // важно: при trial_pending у тебя init() возвращается раньше showApp(),
-        // поэтому тут принудительно показываем приложение
         showApp();
         activateTab("billing");
         window.history.replaceState({}, "", "/payment");
@@ -3118,10 +3078,8 @@ function showPlanSelectModal(opts = {}) {
         overlay.remove();
         billOpenModal("plan_modal");
         return;
-        const isRu = currentLang === "ru";
       }
 
-      // ✅ TRIAL → закрыть и обновить UI (без reload)
       overlay.remove();
 
       try {
@@ -3138,7 +3096,7 @@ function showPlanSelectModal(opts = {}) {
       return;
     } catch (e) {
       err.textContent = e && e.message ? e.message : String(e);
-      err.style.display = "block";
+      err.classList.remove("hidden");
     }
   }
 
@@ -3146,6 +3104,7 @@ function showPlanSelectModal(opts = {}) {
     e.preventDefault();
     select("trial");
   };
+  
   overlay.querySelector("#plan-pro").onclick = (e) => {
     e.preventDefault();
     select("pro");
@@ -3291,7 +3250,7 @@ async function initBillingUI() {
         currentLang === "ru"
           ? "Лимит соц-аккаунтов для Trial — 2. Чтобы добавить больше, перейдите на PRO."
           : "Trial limit is 2 social accounts. Upgrade to PRO to add more.",
-        currentLang === "ru" ? "Ограничение тарифа" : "Plan limit"
+        currentLang === "ru" ? "Ограничение тарифа" : "Plan limit",
       );
       history.replaceState({}, "", window.location.pathname);
     }
@@ -3523,7 +3482,7 @@ async function renderConnectionsDropdown() {
 
   const active = connections.filter((c) => getUiStatus(c) === "active");
   const needReconnect = connections.filter(
-    (c) => getUiStatus(c) === "need_reconnect"
+    (c) => getUiStatus(c) === "need_reconnect",
   );
   const disabled = connections.filter((c) => {
     const s = getUiStatus(c);
@@ -3580,8 +3539,8 @@ async function renderConnectionsDropdown() {
     const statusClass = isActive
       ? "active"
       : isNeedReconnect
-      ? "need-reconnect"
-      : "disabled";
+        ? "need-reconnect"
+        : "disabled";
 
     // кнопка: если need_reconnect — подсвечиваем и текст "Переподключить"
     const reconnectText =
@@ -3736,9 +3695,13 @@ function escapeHtml(s) {
   return String(s || "").replace(
     /[&<>"']/g,
     (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[
-        c
-      ])
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+      })[c],
   );
 }
 
@@ -3935,7 +3898,7 @@ function updateCreaAccountCheckboxLimit() {
       cb.closest("label")?.style && (cb.closest("label").style.opacity = "0.6");
       cb.closest("label")?.setAttribute(
         "title",
-        `Лимит аккаунтов: ${checkedCount}/${maxAcc}`
+        `Лимит аккаунтов: ${checkedCount}/${maxAcc}`,
       );
     } else {
       cb.disabled = false;
@@ -3955,7 +3918,7 @@ function updateCreativesAccountsSummary() {
   if (!countEl || !list) return;
 
   const checked = list.querySelectorAll(
-    'input[type="checkbox"][data-acc-id]:checked'
+    'input[type="checkbox"][data-acc-id]:checked',
   ).length;
   countEl.textContent = String(checked);
 }
@@ -4043,8 +4006,8 @@ async function renderCreaConnectionsMultiSelect() {
 
   const saved = new Set(
     (JSON.parse(localStorage.getItem("creaSelectedConnIds") || "[]") || []).map(
-      String
-    )
+      String,
+    ),
   );
   // если ничего не сохранено — по умолчанию выбираем ВСЕ активные фармы
   if (saved.size === 0 && conns.length) {
@@ -4498,9 +4461,9 @@ function renderCreatives() {
     ? new Set(
         [
           ...toggles.querySelectorAll(
-            'input[type="checkbox"][data-mkey]:checked'
+            'input[type="checkbox"][data-mkey]:checked',
           ),
-        ].map((i) => i.getAttribute("data-mkey"))
+        ].map((i) => i.getAttribute("data-mkey")),
       )
     : new Set(CREA_METRICS.map((m) => m.key));
 
@@ -4560,7 +4523,7 @@ function renderCreatives() {
       const tr = document.createElement("tr");
       const v = c.metrics?.[m.key] ?? 0;
       tr.innerHTML = `<td>${escapeHtml(m.label)}</td><td>${escapeHtml(
-        m.fmt(v)
+        m.fmt(v),
       )}</td>`;
       table.appendChild(tr);
     });
@@ -4603,7 +4566,7 @@ async function loadCreatives() {
     alert(
       currentLang === "ru"
         ? "Ваш план PRO истёк. Пожалуйста, оформите подписку для продолжения работы."
-        : "Your PRO plan has expired. Please upgrade your subscription to continue."
+        : "Your PRO plan has expired. Please upgrade your subscription to continue.",
     );
     return;
   }
@@ -4622,6 +4585,9 @@ async function loadCreatives() {
     alert("Выбери хотя бы 1 соц-аккаунт в креативах");
     return;
   }
+
+  // ✅ LOADER START - validation ke baad
+  showLoader("Загрузка креативов...");
   setBtnLoading(btn, true);
 
   try {
@@ -4664,6 +4630,7 @@ async function loadCreatives() {
     alert("Failed to load creatives. Check console.");
   } finally {
     setBtnLoading(btn, false);
+    hideLoader(); // ✅ LOADER END
   }
 }
 
@@ -4761,7 +4728,7 @@ async function initCreativesTab() {
         console.log(
           "[CREA] ✓ Metrics rendered:",
           toggles.children.length,
-          "items"
+          "items",
         );
         console.log("[CREA] ✓ HTML:", toggles.innerHTML.slice(0, 200));
       } else {

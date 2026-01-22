@@ -447,18 +447,12 @@ body::before {
   background: rgba(255, 255, 255, 0.95);
 }
 
-.logo-wrap {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
 .logo {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 6px 10px; /* breathing space */
-  border-radius: 14px; /* removes rectangle feel */
+  padding: 10px 14px; /* thoda zyada breathing space */
+  border-radius: 20px; /* rounded container */
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -466,23 +460,31 @@ body::before {
 }
 
 .logo img {
-  height: 36px; /* clean height */
+  height: 52px;
   width: auto;
   display: block;
-  filter: drop-shadow(0 4px 10px rgba(124, 92, 255, 0.25));
+  border-radius: 14px;
+  filter: drop-shadow(0 6px 14px rgba(124, 92, 255, 0.28));
   transition:
     transform 0.25s ease,
     filter 0.25s ease;
 }
+
 .logo:hover {
-  background: rgba(124, 92, 255, 0.08); /* soft glow, no box */
-  box-shadow: 0 10px 30px rgba(124, 92, 255, 0.18);
-  transform: translateY(-1px);
+  background: rgba(124, 92, 255, 0.1);
+  box-shadow: 0 14px 36px rgba(124, 92, 255, 0.22);
+  transform: translateY(-2px);
 }
 
 .logo:hover img {
-  transform: scale(1.06);
-  filter: drop-shadow(0 8px 18px rgba(124, 92, 255, 0.35));
+  transform: scale(1.08);
+  filter: drop-shadow(0 10px 22px rgba(124, 92, 255, 0.4));
+}
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* logo aur Trial badge ka gap */
+  flex-shrink: 0; /* navbar me neeche girnay se roke */
 }
 
 .plan-label {
@@ -2992,6 +2994,21 @@ body.crea-fit-cover .crea-media video {
    UI MODAL (Alert Replacement)
    ============================================ */
 
+/* ============================================
+   UI MODAL (Notification Popup) - PREMIUM CARD STYLE
+   ============================================
+   
+   📍 INSTRUCTIONS:
+   In your styles.css file, find and REPLACE the entire
+   .ui-modal section (around line 1550-1610) with this code.
+   
+   This matches the clean "PRO required" popup design.
+   ============================================ */
+
+/* ============================================
+   UI MODAL (Alert Replacement) - PREMIUM CARD STYLE
+   ============================================ */
+
 .ui-modal {
   position: fixed;
   inset: 0;
@@ -2999,63 +3016,122 @@ body.crea-fit-cover .crea-media video {
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  padding: var(--spacing-lg);
+  padding: 20px;
+  animation: uiModalFadeIn 0.2s ease;
+}
+
+@keyframes uiModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes uiModalBoxIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .ui-modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .ui-modal-box {
   position: relative;
   width: 100%;
-  max-width: 480px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-2xl);
-  animation: fadeInUp 0.3s ease;
+  max-width: 380px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 12px;
+  padding: 28px 24px 24px;
+  box-shadow:
+    0 20px 40px -10px rgba(15, 23, 42, 0.12),
+    0 8px 20px -6px rgba(15, 23, 42, 0.08);
+  animation: uiModalBoxIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: center;
 }
 
 .ui-modal-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-md);
+  color: #1e293b;
+  margin-bottom: 10px;
+  letter-spacing: -0.2px;
 }
 
 .ui-modal-text {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-lg);
-  line-height: 1.6;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .ui-modal-btn {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-lilac),
-    var(--primary-purple)
-  );
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+  padding: 10px 24px;
+  background: #3b82f6;
+  color: #ffffff;
   border: none;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.18);
 }
 
 .ui-modal-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow-lilac);
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+}
+
+.ui-modal-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Focus state for accessibility */
+.ui-modal-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.25),
+    0 4px 10px rgba(59, 130, 246, 0.2);
+}
+
+/* Responsive: slightly smaller on mobile */
+@media (max-width: 480px) {
+  .ui-modal-box {
+    max-width: 340px;
+    padding: 24px 20px 20px;
+    margin: 0 16px;
+  }
+
+  .ui-modal-title {
+    font-size: 15px;
+  }
+
+  .ui-modal-text {
+    font-size: 12px;
+  }
 }
 /* ============================================
    CREATIVES - METRICS TOGGLES
@@ -3826,4 +3902,439 @@ canvas {
     width: auto; /* instead of calc(100vw - 32px) */
     transform: none; /* remove translateX(-50%) */
   }
+}
+/* ============================================
+   LOGO LOADER - ANIMATED LOADING OVERLAY
+   ============================================
+   
+   📍 ADD THIS TO YOUR styles.css FILE (at the end)
+   
+   Usage in JS:
+   - showLoader()  → show loading
+   - hideLoader()  → hide loading
+   ============================================ */
+
+/* ============================================
+   LOGO LOADER OVERLAY
+   ============================================ */
+
+.logo-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+
+  /* Semi-transparent backdrop */
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  /* Fade in animation */
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease;
+}
+
+.logo-loader.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Logo container with glow effect */
+.logo-loader__icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The actual logo image */
+.logo-loader__img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 16px;
+
+  /* Main animation: pulse + slight rotation */
+  animation: logoLoaderPulse 1.5s ease-in-out infinite;
+
+  /* Glow effect */
+  filter: drop-shadow(0 8px 24px rgba(167, 139, 250, 0.4));
+}
+
+/* Spinning ring around logo */
+.logo-loader__ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #a78bfa;
+  border-right-color: #8b5cf6;
+  animation: logoLoaderSpin 1s linear infinite;
+}
+
+/* Second ring (slower, opposite direction) */
+.logo-loader__ring-2 {
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-bottom-color: #3b82f6;
+  border-left-color: #60a5fa;
+  animation: logoLoaderSpinReverse 1.5s linear infinite;
+  opacity: 0.6;
+}
+
+/* Loading text */
+.logo-loader__text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.5px;
+
+  /* Text fade animation */
+  animation: logoLoaderTextPulse 1.5s ease-in-out infinite;
+}
+
+/* Loading dots animation */
+.logo-loader__dots {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 4px;
+}
+
+.logo-loader__dot {
+  width: 4px;
+  height: 4px;
+  background: #a78bfa;
+  border-radius: 50%;
+  animation: logoLoaderDot 1.4s ease-in-out infinite;
+}
+
+.logo-loader__dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.logo-loader__dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.logo-loader__dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+
+/* Logo pulse animation */
+@keyframes logoLoaderPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 8px 24px rgba(167, 139, 250, 0.4));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 12px 32px rgba(167, 139, 250, 0.6));
+  }
+}
+
+/* Ring spin animation */
+@keyframes logoLoaderSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reverse ring spin */
+@keyframes logoLoaderSpinReverse {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Text pulse */
+@keyframes logoLoaderTextPulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Dot bounce */
+@keyframes logoLoaderDot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   ALTERNATIVE STYLES (Optional)
+   ============================================ */
+
+/* Style 2: More subtle, just spinning logo */
+.logo-loader.style-spin .logo-loader__img {
+  animation: logoLoaderSpinOnly 1.2s linear infinite;
+}
+
+@keyframes logoLoaderSpinOnly {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Style 3: Bounce effect */
+.logo-loader.style-bounce .logo-loader__img {
+  animation: logoLoaderBounce 0.6s ease-in-out infinite;
+}
+
+@keyframes logoLoaderBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* ============================================
+   DARK OVERLAY VARIANT (if needed)
+   ============================================ */
+
+.logo-loader.dark {
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.logo-loader.dark .logo-loader__text {
+  color: #e2e8f0;
+}
+/* =========================================================
+   PLAN SELECTION MODAL — FINAL CLEAN VERSION
+   FIXED • CENTERED • NO SCROLL • PREMIUM UI
+   ========================================================= */
+
+/* ===== MODAL BACKDROP ===== */
+#plan-modal.modal {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  overflow: hidden !important;
+
+  background: linear-gradient(
+    135deg,
+    rgba(237, 233, 254, 0.95),
+    rgba(219, 234, 254, 0.95)
+  ) !important;
+
+  backdrop-filter: blur(14px) !important;
+}
+
+/* ===== MODAL BOX ===== */
+#plan-modal .modal-content {
+  width: 100% !important;
+  max-width: 1080px !important;
+  margin: 0 !important;
+  padding: 26px 28px 28px !important;
+
+  border-radius: 22px !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 250, 252, 0.95)
+  ) !important;
+
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18) !important;
+  overflow: hidden !important;
+}
+
+/* ===== HEADER ===== */
+#plan-modal .modal-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  margin-bottom: 18px !important;
+}
+
+#plan-modal .modal-title {
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.4px !important;
+}
+
+#plan-modal .modal-subtitle {
+  font-size: 13px !important;
+  margin-top: 4px !important;
+  color: #64748b !important;
+}
+
+/* ===== CLOSE BUTTON ===== */
+#plan-modal #plan-x {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 12px !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+}
+
+/* ===== PLAN GRID ===== */
+#plan-modal #plan-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1.1fr !important;
+  gap: 18px !important;
+}
+
+/* ===== PLAN CARDS ===== */
+#plan-modal #plan-grid > div {
+  border-radius: 22px !important;
+  padding: 22px 22px !important;
+  overflow: hidden !important;
+}
+
+/* ===== TRIAL CARD ===== */
+#plan-modal #plan-grid > div:first-child {
+  background: linear-gradient(180deg, #ffffff, #fafbfc) !important;
+  border: 2px solid #e2e8f0 !important;
+}
+
+/* ===== PRO CARD ===== */
+#plan-modal #plan-grid > div:nth-child(2) {
+  background: linear-gradient(180deg, #1e2330, #141823) !important;
+  border: 2px solid rgba(167, 139, 250, 0.45) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* ===== PLAN TOP ===== */
+#plan-modal .plan-top {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 14px !important;
+}
+
+/* ===== PLAN NAME ===== */
+#plan-modal .plan-name {
+  font-size: 20px !important;
+  font-weight: 900 !important;
+}
+
+/* ===== BADGES ===== */
+#plan-modal .plan-pill {
+  font-size: 10px !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+}
+
+/* ===== PRICE ===== */
+#plan-modal .plan-price {
+  font-size: 34px !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+#plan-modal .plan-price-sub {
+  font-size: 11px !important;
+  opacity: 0.7 !important;
+}
+
+/* ===== SECTIONS ===== */
+#plan-modal .plan-section-title {
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  margin: 14px 0 10px !important;
+  text-transform: uppercase !important;
+}
+
+/* ===== FEATURES ===== */
+#plan-modal .plan-features {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 18px 0 !important;
+}
+
+#plan-modal .plan-features li {
+  font-size: 13px !important;
+  padding: 7px 0 7px 26px !important;
+  position: relative !important;
+}
+
+#plan-modal .plan-features li::before {
+  content: "✓" !important;
+  position: absolute !important;
+  left: 0 !important;
+  font-weight: 900 !important;
+}
+
+/* ===== BUTTONS ===== */
+#plan-modal .plan-btn {
+  width: 100% !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+}
+
+/* ===== NOTES ===== */
+#plan-modal .plan-note {
+  margin-top: 10px !important;
+  font-size: 11px !important;
+  opacity: 0.7 !important;
+  text-align: center !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 860px) {
+  #plan-modal #plan-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #plan-modal .modal-content {
+    max-width: 420px !important;
+  }
+}
+
+/* ===== HARD NO-SCROLL GUARANTEE ===== */
+#plan-modal,
+#plan-modal * {
+  scrollbar-width: none !important;
+}
+
+#plan-modal::-webkit-scrollbar,
+#plan-modal *::-webkit-scrollbar {
+  display: none !important;
 }
