@@ -6,8 +6,11 @@ dns.setDefaultResultOrder("ipv4first");
 
 // === SECURITY: require SESSION_SECRET in prod, use default in dev ===
 const isProdEnv = process.env.NODE_ENV === "production";
+const isLocal = process.env.PUBLIC_BASE_URL.includes("localhost");
+
 if (isProdEnv && !process.env.SESSION_SECRET) {
   throw new Error("SESSION_SECRET is required in production");
+
 }
 // Default secret for development only - DO NOT use in production!
 if (!process.env.SESSION_SECRET) {
@@ -340,9 +343,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: isProd, // ❗️КЛЮЧ
-      sameSite: isProd ? "none" : "lax", // ❗️КЛЮЧ
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: isProd && !isLocal, // ❌ only secure in real prod (HTTPS)
+      sameSite: isProd && !isLocal ? "none" : "lax", // ❌ none in prod, lax locally
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
     },
   })
 );
