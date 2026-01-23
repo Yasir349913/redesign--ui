@@ -2906,7 +2906,8 @@ function showPlanSelectModal(opts = {}) {
   const force = opts.force === true;
   if (document.getElementById("plan-modal")) return;
 
-  const isRu = (typeof currentLang !== "undefined" ? currentLang : "ru") === "ru";
+  const isRu =
+    (typeof currentLang !== "undefined" ? currentLang : "ru") === "ru";
 
   const overlay = document.createElement("div");
   overlay.id = "plan-modal";
@@ -2922,9 +2923,11 @@ function showPlanSelectModal(opts = {}) {
             ${isRu ? "Выберите план" : "Choose your plan"}
           </div>
           <div class="modal-subtitle">
-            ${isRu 
-              ? "Можно начать с Trial. PRO можно активировать в любой момент."
-              : "Start with Trial. You can upgrade to PRO anytime."}
+            ${
+              isRu
+                ? "Можно начать с Trial. PRO можно активировать в любой момент."
+                : "Start with Trial. You can upgrade to PRO anytime."
+            }
           </div>
         </div>
         <button id="plan-x" aria-label="Close" class="icon-btn">✕</button>
@@ -2953,9 +2956,11 @@ function showPlanSelectModal(opts = {}) {
           <ul class="plan-features">
             <li>${isRu ? "2 соц-аккаунта" : "2 social accounts"}</li>
             <li>${isRu ? "до 6 рекламных кабинетов" : "up to 6 ad accounts"}</li>
-            <li>${isRu 
-              ? "базовые функции (правила/креативы)"
-              : "basic features (rules/creatives)"}</li>
+            <li>${
+              isRu
+                ? "базовые функции (правила/креативы)"
+                : "basic features (rules/creatives)"
+            }</li>
           </ul>
 
           <button id="plan-trial" class="plan-btn">
@@ -2979,9 +2984,11 @@ function showPlanSelectModal(opts = {}) {
             <div class="plan-price-section">
               <div class="plan-price">$10</div>
               <div class="plan-price-sub">
-                ${isRu 
-                  ? "Действует 30 дней после оплаты"
-                  : "Valid for 30 days after payment"}
+                ${
+                  isRu
+                    ? "Действует 30 дней после оплаты"
+                    : "Valid for 30 days after payment"
+                }
               </div>
             </div>
           </div>
@@ -2993,9 +3000,11 @@ function showPlanSelectModal(opts = {}) {
           <ul class="plan-features">
             <li>${isRu ? "5 соц-аккаунтов" : "5 social accounts"}</li>
             <li>${isRu ? "до 50 рекламных кабинетов" : "up to 50 ad accounts"}</li>
-            <li>${isRu 
-              ? "все функции + без ограничений"
-              : "all features + no limits"}</li>
+            <li>${
+              isRu
+                ? "все функции + без ограничений"
+                : "all features + no limits"
+            }</li>
           </ul>
 
           <button id="plan-pro" class="plan-btn plan-btn-primary">
@@ -3003,9 +3012,11 @@ function showPlanSelectModal(opts = {}) {
           </button>
 
           <div class="plan-note">
-            ${isRu 
-              ? "Оплата USDT TRC20, USDT BEP20, BTC"
-              : "Crypto payment with USDT TRC20, USDT BEP20, BTC"}
+            ${
+              isRu
+                ? "Оплата USDT TRC20, USDT BEP20, BTC"
+                : "Crypto payment with USDT TRC20, USDT BEP20, BTC"
+            }
           </div>
         </div>
 
@@ -3104,7 +3115,7 @@ function showPlanSelectModal(opts = {}) {
     e.preventDefault();
     select("trial");
   };
-  
+
   overlay.querySelector("#plan-pro").onclick = (e) => {
     e.preventDefault();
     select("pro");
@@ -3222,7 +3233,7 @@ async function initBillingUI() {
           <div style="text-align:center; padding:50px; font-family:system-ui,sans-serif;">
             <h2>Authentication Error</h2>
             <p>Unable to verify session. Please try logging in again.</p>
-            <p style="color:#888;font-size:14px;">Make sure you're accessing via http://localhost:3000</p>
+            <p style="color:#888;font-size:14px;">Please refresh the page or login again</p>
             <a href="/" style="color:#3b82f6;">Go to Login Page</a>
           </div>
         `;
