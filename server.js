@@ -6,12 +6,13 @@ dns.setDefaultResultOrder("ipv4first");
 
 // === SECURITY: require SESSION_SECRET in prod, use default in dev ===
 const isProdEnv = process.env.NODE_ENV === "production";
+const sesssionSecret = process.env.SESSION_SECRET;
 
-if (isProdEnv && !process.env.SESSION_SECRET) {
+if (isProdEnv && !sesssionSecret) {
   throw new Error("SESSION_SECRET is required in production");
 }
 // Default secret for development only - DO NOT use in production!
-if (!process.env.SESSION_SECRET) {
+if (!sesssionSecret) {
   process.env.SESSION_SECRET = "dev_secret_key_CHANGE_THIS_IN_PRODUCTION_12345";
   console.warn(
     "⚠️  Using default SESSION_SECRET - OK for development, NOT for production!",
