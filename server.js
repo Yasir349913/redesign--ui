@@ -6,17 +6,15 @@ dns.setDefaultResultOrder("ipv4first");
 
 // === SECURITY: require SESSION_SECRET in prod, use default in dev ===
 const isProdEnv = process.env.NODE_ENV === "production";
-const isLocal = process.env.PUBLIC_BASE_URL.includes("localhost");
 
 if (isProdEnv && !process.env.SESSION_SECRET) {
   throw new Error("SESSION_SECRET is required in production");
-
 }
 // Default secret for development only - DO NOT use in production!
 if (!process.env.SESSION_SECRET) {
   process.env.SESSION_SECRET = "dev_secret_key_CHANGE_THIS_IN_PRODUCTION_12345";
   console.warn(
-    "⚠️  Using default SESSION_SECRET - OK for development, NOT for production!"
+    "⚠️  Using default SESSION_SECRET - OK for development, NOT for production!",
   );
 }
 const { v4: uuidv4 } = require("uuid");
@@ -54,7 +52,7 @@ async function metaValidateToken(accessToken) {
       axios.get(`https://graph.facebook.com/${META_API_VERSION}/me`, {
         params: { fields: "id,name", access_token: token },
         timeout: 15000,
-      })
+      }),
     );
 
     const id = r.data?.id;
@@ -219,7 +217,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // как часто тикает шедулер (по умолчанию раз в минуту)
 const SCHEDULER_INTERVAL_MS = parseInt(
   process.env.SCHEDULER_INTERVAL_MS || "60000",
-  10
+  10,
 );
 
 // ----- middlewares -----
@@ -261,7 +259,7 @@ app.post(
         db.get(
           `SELECT * FROM invoices WHERE provider='nowpayments' AND provider_payment_id=?`,
           [provider_payment_id],
-          (err, row) => resolve(row || null)
+          (err, row) => resolve(row || null),
         );
       });
 
@@ -287,7 +285,7 @@ app.post(
             JSON.stringify(body),
             now,
           ],
-          () => resolve()
+          () => resolve(),
         );
       });
       // обновим invoice статус
@@ -299,7 +297,7 @@ app.post(
           Number(body.actually_paid || body.pay_amount || 0),
           now,
           inv.id,
-        ]
+        ],
       );
 
       // Если paid/finished/confirmed — активируем PRO
@@ -316,12 +314,12 @@ app.post(
                pro_ends_at=?,
                updated_at=?
            WHERE id=?`,
-          [proEndsAt, now, inv.app_user_id]
+          [proEndsAt, now, inv.app_user_id],
         );
 
         await runAsync(
           `UPDATE invoices SET paid_at=?, updated_at=? WHERE id=?`,
-          [now, now, inv.id]
+          [now, now, inv.id],
         );
       }
 
@@ -330,7 +328,7 @@ app.post(
       console.error("[NOWPAY] webhook error", e);
       return res.status(500).send("error");
     }
-  }
+  },
 );
 const isProd = process.env.NODE_ENV === "production";
 
@@ -343,11 +341,11 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: isProd && !isLocal, // ❌ only secure in real prod (HTTPS)
-      sameSite: isProd && !isLocal ? "none" : "lax", // ❌ none in prod, lax locally
+      secure: isProd, // ❌ only secure in real prod (HTTPS)
+      sameSite: isProd ? "none" : "lax", // ❌ none in prod, lax locally
       maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
     },
-  })
+  }),
 );
 app.get("/admin", (req, res) => {
   // просто отдаём файл, доступ контролируем API логином
@@ -367,13 +365,13 @@ app.post("/api/admin/login", (req, res) => {
     "[ADMIN LOGIN] login=",
     JSON.stringify(login),
     "pass=",
-    JSON.stringify(pass)
+    JSON.stringify(pass),
   );
   console.log(
     "[ADMIN LOGIN] envLogin=",
     JSON.stringify(ADMIN_LOGIN),
     "envPass=",
-    JSON.stringify(ADMIN_PASS)
+    JSON.stringify(ADMIN_PASS),
   );
 
   if (login === ADMIN_LOGIN && pass === ADMIN_PASS) {
@@ -396,7 +394,7 @@ async function adminCreaSetState(patch) {
       next.progress_total,
       next.progress_done,
       next.last_error,
-    ]
+    ],
   );
 }
 
@@ -447,7 +445,7 @@ async function adminSyncCreatives({ since, until }) {
     // IMPORTANT: чтобы метрики не раздувались при повторном sync
     await runAsync(
       `DELETE FROM admin_creative_stats_daily WHERE day BETWEEN ? AND ?`,
-      [since, until]
+      [since, until],
     );
 
     let done = 0;
@@ -475,8 +473,8 @@ async function adminSyncCreatives({ since, until }) {
           card.asset_type === "video"
             ? "video"
             : card.asset_type === "image"
-            ? "image"
-            : "unknown";
+              ? "image"
+              : "unknown";
 
         await runAsync(
           `INSERT OR IGNORE INTO admin_creatives(
@@ -496,7 +494,7 @@ async function adminSyncCreatives({ since, until }) {
             now,
             card._video_id || "",
             Number(c.conn_id || 0),
-          ]
+          ],
         );
 
         // обновим media/thumb если появилось
@@ -518,7 +516,7 @@ async function adminSyncCreatives({ since, until }) {
             Number(c.conn_id || 0),
             card.asset_key,
             card.link_url,
-          ]
+          ],
         );
 
         const daily = card.daily || {};
@@ -547,7 +545,7 @@ async function adminSyncCreatives({ since, until }) {
               Number(m.registrations || 0),
               Number(m.purchases || 0),
               Number(m.app_purchases || 0),
-            ]
+            ],
           );
         }
       }
@@ -599,7 +597,7 @@ app.get("/api/admin/creatives/search", requireAdmin, async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const limit = Math.max(
       12,
-      Math.min(500, parseInt(req.query.limit || "48", 10))
+      Math.min(500, parseInt(req.query.limit || "48", 10)),
     );
 
     const offset = (page - 1) * limit;
@@ -630,7 +628,7 @@ SELECT
       ORDER BY spend DESC
       LIMIT ? OFFSET ?
       `,
-      [from, to, minSpend, minPurch, minAppPurch, limit, offset]
+      [from, to, minSpend, minPurch, minAppPurch, limit, offset],
     );
 
     const items = (rows || []).map((r) => {
@@ -661,7 +659,7 @@ SELECT
       try {
         const row = await getAsync(
           `SELECT access_token FROM fb_connections WHERE id=?`,
-          [it.src_conn_id]
+          [it.src_conn_id],
         );
         const accessToken = decryptToken(row?.access_token || "");
         if (!accessToken) continue;
@@ -731,27 +729,27 @@ app.get("/api/admin/overview", requireAdmin, async (req, res) => {
   ORDER BY u.created_at DESC
   LIMIT 2000
 `,
-      [fromMs, toMs, fromMs, toMs, fromMs, toMs]
+      [fromMs, toMs, fromMs, toMs, fromMs, toMs],
     );
 
     const signups = await getAsync(
       `SELECT COUNT(*) as c FROM app_users WHERE created_at BETWEEN ? AND ?`,
-      [fromMs, toMs]
+      [fromMs, toMs],
     );
 
     const trials = await getAsync(
       `SELECT COUNT(*) as c FROM app_users WHERE trial_started_at BETWEEN ? AND ?`,
-      [fromMs, toMs]
+      [fromMs, toMs],
     );
 
     const pros = await getAsync(
       `SELECT COUNT(*) as c FROM invoices WHERE payment_status='finished' AND paid_at BETWEEN ? AND ?`,
-      [fromMs, toMs]
+      [fromMs, toMs],
     );
 
     const uniqVisits = await getAsync(
       `SELECT COUNT(DISTINCT anon_id) as c FROM site_events WHERE event='visit' AND created_at BETWEEN ? AND ?`,
-      [fromMs, toMs]
+      [fromMs, toMs],
     );
 
     res.json({
@@ -789,7 +787,7 @@ app.post("/api/public/track", async (req, res) => {
 
     await runAsync(
       `INSERT INTO site_events(event, anon_id, ip, ua, created_at) VALUES(?,?,?,?,?)`,
-      [event, anon_id, ip, ua, now]
+      [event, anon_id, ip, ua, now],
     );
 
     res.json({ ok: true });
@@ -901,7 +899,7 @@ async function pauseAllRulesForAppUser(appUserId) {
     `UPDATE rules
      SET status='paused'
      WHERE app_user_id=? AND status!='paused'`,
-    [appUserId]
+    [appUserId],
   );
 }
 
@@ -928,7 +926,7 @@ function getAppUserByEmail(email) {
       (err, row) => {
         if (err) return reject(err);
         resolve(row);
-      }
+      },
     );
   });
 }
@@ -1013,7 +1011,7 @@ async function ensureTrialActivated(appUserId) {
          trial_ends_at = ?,
          updated_at = ?
      WHERE id = ?`,
-    [t, ends, t, appUserId]
+    [t, ends, t, appUserId],
   );
 
   return await getAppUserById(appUserId);
@@ -1043,7 +1041,7 @@ async function requirePlanAccess(req, res, next) {
   if (u.plan === "trial" && u.trial_ends_at && now > u.trial_ends_at) {
     await runAsync(
       `UPDATE app_users SET plan='expired', updated_at=? WHERE id=?`,
-      [now, u.id]
+      [now, u.id],
     );
     u.plan = "expired";
   }
@@ -1052,7 +1050,7 @@ async function requirePlanAccess(req, res, next) {
   if (u.plan === "pro" && u.pro_ends_at && now > u.pro_ends_at) {
     await runAsync(
       `UPDATE app_users SET plan='expired', updated_at=? WHERE id=?`,
-      [now, u.id]
+      [now, u.id],
     );
     u.plan = "expired";
   }
@@ -1095,7 +1093,7 @@ app.post("/api/auth/register", async (req, res) => {
   const ins = await runAsync(
     `INSERT INTO app_users (email, password_hash, plan, trial_used, created_at, updated_at)
      VALUES (?, ?, 'trial_pending', 0, ?, ?)`,
-    [email, hash, t, t]
+    [email, hash, t, t],
   );
 
   const code = genCode6();
@@ -1104,13 +1102,13 @@ app.post("/api/auth/register", async (req, res) => {
   await runAsync(
     `INSERT INTO email_verifications (user_id, code, expires_at, used_at, created_at)
      VALUES (?, ?, ?, NULL, ?)`,
-    [ins.lastID, code, expires, t]
+    [ins.lastID, code, expires, t],
   );
 
   await sendEmail(
     email,
     "Rulez.vip — код подтверждения",
-    `Ваш код: ${code}\nДействует 30 минут.`
+    `Ваш код: ${code}\nДействует 30 минут.`,
   );
 
   res.json({ ok: true, message: "Код отправлен на почту" });
@@ -1174,7 +1172,7 @@ app.get("/api/billing/invoice/:id", requireAppAuth, async (req, res) => {
        FROM invoices
        WHERE id = ? AND app_user_id = ?`,
       [id, appUserId],
-      (err, row) => resolve(row || null)
+      (err, row) => resolve(row || null),
     );
   });
 
@@ -1215,7 +1213,7 @@ app.post(
         function (err) {
           if (err) return reject(err);
           resolve({ id: this.lastID });
-        }
+        },
       );
     });
 
@@ -1246,7 +1244,7 @@ app.post(
     } catch (e) {
       console.error(
         "[NOWPAY] create payment failed",
-        e.response?.data || e.message
+        e.response?.data || e.message,
       );
       return res.status(500).json({ error: "Failed to create payment" });
     }
@@ -1264,7 +1262,7 @@ app.post(
         Number(p.pay_amount || 0),
         Date.now(),
         inv.id,
-      ]
+      ],
     );
 
     res.json({
@@ -1279,7 +1277,7 @@ app.post(
         provider_payment_id: p.payment_id,
       },
     });
-  }
+  },
 );
 
 // verify email by code
@@ -1296,7 +1294,7 @@ app.post("/api/auth/verify", async (req, res) => {
     `SELECT * FROM email_verifications
      WHERE user_id = ? AND code = ? AND used_at IS NULL
      ORDER BY id DESC LIMIT 1`,
-    [user.id, code]
+    [user.id, code],
   );
 
   if (!row) return res.status(400).json({ error: "Bad code" });
@@ -1310,7 +1308,7 @@ app.post("/api/auth/verify", async (req, res) => {
   ]);
   await runAsync(
     `UPDATE app_users SET email_verified_at = COALESCE(email_verified_at, ?), updated_at = ? WHERE id = ?`,
-    [t, t, user.id]
+    [t, t, user.id],
   );
 
   res.json({ ok: true, message: "Email подтвержден. Теперь можно войти." });
@@ -1364,13 +1362,13 @@ app.post("/api/auth/reset/request", async (req, res) => {
   await runAsync(
     `INSERT INTO password_resets (user_id, code, expires_at, used_at, created_at)
      VALUES (?, ?, ?, NULL, ?)`,
-    [user.id, code, expires, t]
+    [user.id, code, expires, t],
   );
 
   await sendEmail(
     email,
     "Rulez.vip — восстановление пароля",
-    `Код: ${code}\nДействует 30 минут.`
+    `Код: ${code}\nДействует 30 минут.`,
   );
   res.json({ ok: true, message: "Если email существует — код отправлен." });
 });
@@ -1390,7 +1388,7 @@ app.post("/api/auth/reset/confirm", async (req, res) => {
     `SELECT * FROM password_resets
      WHERE user_id = ? AND code = ? AND used_at IS NULL
      ORDER BY id DESC LIMIT 1`,
-    [user.id, code]
+    [user.id, code],
   );
   if (!row) return res.status(400).json({ error: "Bad code" });
   if (nowMs() > row.expires_at)
@@ -1405,7 +1403,7 @@ app.post("/api/auth/reset/confirm", async (req, res) => {
   ]);
   await runAsync(
     `UPDATE app_users SET password_hash = ?, updated_at = ? WHERE id = ?`,
-    [hash, t, user.id]
+    [hash, t, user.id],
   );
 
   res.json({ ok: true, message: "Пароль обновлен." });
@@ -1423,7 +1421,7 @@ app.get("/api/app/me", requireAppAuth, async (req, res) => {
   if (u.plan === "trial" && u.trial_ends_at && now > u.trial_ends_at) {
     await runAsync(
       `UPDATE app_users SET plan='expired', updated_at=? WHERE id=?`,
-      [now, u.id]
+      [now, u.id],
     );
     u = await getAppUserById(u.id);
   }
@@ -1432,7 +1430,7 @@ app.get("/api/app/me", requireAppAuth, async (req, res) => {
   if (u.plan === "pro" && u.pro_ends_at && now > u.pro_ends_at) {
     await runAsync(
       `UPDATE app_users SET plan='expired', updated_at=? WHERE id=?`,
-      [now, u.id]
+      [now, u.id],
     );
     u = await getAppUserById(u.id);
   }
@@ -1455,10 +1453,10 @@ app.get("/api/app/me", requireAppAuth, async (req, res) => {
   const limits = expired
     ? { max_connections: 0, max_ad_accounts: 0 }
     : isTrial
-    ? { max_connections: 2, max_ad_accounts: 6 }
-    : isPro
-    ? { max_connections: 5, max_ad_accounts: 50 }
-    : { max_connections: 0, max_ad_accounts: 0 };
+      ? { max_connections: 2, max_ad_accounts: 6 }
+      : isPro
+        ? { max_connections: 5, max_ad_accounts: 50 }
+        : { max_connections: 0, max_ad_accounts: 0 };
 
   const DAY = 24 * 60 * 60 * 1000;
   let daysLeft = null;
@@ -1478,7 +1476,7 @@ app.get("/api/app/me", requireAppAuth, async (req, res) => {
          (SELECT COUNT(*) FROM app_user_ad_accounts WHERE app_user_id=?) AS linked_ad_accounts`,
       [u.id, u.id],
       (err, row) =>
-        resolve(row || { active_connections: 0, linked_ad_accounts: 0 })
+        resolve(row || { active_connections: 0, linked_ad_accounts: 0 }),
     );
   });
 
@@ -1516,7 +1514,7 @@ async function createFbConnectionWithLimits({
   // === ANTIFRAUD: farm reuse only for PRO ===
   const prev = await getAsync(
     `SELECT app_user_id FROM fb_connections WHERE fb_user_id = ?`,
-    [fbUser.id]
+    [fbUser.id],
   );
 
   if (prev && prev.app_user_id !== appUserId) {
@@ -1534,7 +1532,7 @@ async function createFbConnectionWithLimits({
     `SELECT COUNT(*) as cnt
      FROM fb_connections
      WHERE app_user_id = ? AND status = 'active'`,
-    [appUserId]
+    [appUserId],
   );
 
   if (cntRow.cnt >= limits.max_connections) {
@@ -1555,7 +1553,7 @@ async function createFbConnectionWithLimits({
         created_at,
         updated_at
       ) VALUES (?,?,?,?,?,?,?)`,
-      [appUserId, fbUser.id, fbUser.name, accessToken, "active", now, now]
+      [appUserId, fbUser.id, fbUser.name, accessToken, "active", now, now],
     );
   } catch (e) {
     const msg = String((e && e.message) || "");
@@ -1568,7 +1566,7 @@ async function createFbConnectionWithLimits({
         `UPDATE fb_connections
          SET name = ?, access_token = ?, status = 'active', updated_at = ?
          WHERE fb_user_id = ? AND app_user_id = ?`,
-        [fbUser.name, accessToken, now, fbUser.id, appUserId]
+        [fbUser.name, accessToken, now, fbUser.id, appUserId],
       );
       return;
     }
@@ -1614,7 +1612,7 @@ app.post("/api/connections/recheck", requireAppAuth, async (req, res) => {
        FROM fb_connections
        WHERE app_user_id = ?
        ORDER BY id DESC`,
-      [appUserId]
+      [appUserId],
     );
 
     const results = [];
@@ -1643,7 +1641,7 @@ app.post("/api/connections/recheck", requireAppAuth, async (req, res) => {
           axios.get(`https://graph.facebook.com/${META_API_VERSION}/me`, {
             params: { access_token: token, fields: "id" },
             timeout: 15000,
-          })
+          }),
         );
 
         results.push({ id: c.id, ok: true, ui_status: "active" });
@@ -1673,7 +1671,7 @@ app.post("/api/connections/recheck", requireAppAuth, async (req, res) => {
             `UPDATE fb_connections
              SET status='reconnect_required', access_token=NULL, updated_at=?
              WHERE id=? AND app_user_id=?`,
-            [Date.now(), c.id, appUserId]
+            [Date.now(), c.id, appUserId],
           );
 
           results.push({ id: c.id, ok: true, ui_status: "reconnect_required" });
@@ -1750,7 +1748,7 @@ app.get("/api/connections", requireAppAuth, (req, res) => {
         connections,
         selected_connection_id: selectedId,
       });
-    }
+    },
   );
 });
 
@@ -1766,7 +1764,7 @@ app.delete("/api/connections/:id", requireAppAuth, async (req, res) => {
     const result = await runAsync(
       `DELETE FROM fb_connections
        WHERE id = ? AND app_user_id = ?`,
-      [connId, appUserId]
+      [connId, appUserId],
     );
 
     if (result.changes === 0) {
@@ -1811,7 +1809,7 @@ app.post("/api/connections/select", requireAppAuth, (req, res) => {
       req.session.save(() => {
         res.json({ ok: true, selected_connection_id: row.id });
       });
-    }
+    },
   );
 });
 // отключить (разлогинить) Facebook connection
@@ -1841,7 +1839,7 @@ UPDATE fb_connections
       }
 
       res.json({ ok: true });
-    }
+    },
   );
 });
 
@@ -1875,7 +1873,7 @@ app.get("/auth/login", async (req, res) => {
       `SELECT COUNT(*) AS cnt
        FROM fb_connections
        WHERE app_user_id = ? AND status = 'active'`,
-      [u.id]
+      [u.id],
     );
 
     const state = uuidv4();
@@ -1930,9 +1928,9 @@ app.get("/auth/callback", async (req, res) => {
               code,
             },
             timeout: 15000,
-          }
+          },
         ),
-      { maxRetries: 2 } // сеть может моргнуть — 1-2 ретрая ок
+      { maxRetries: 2 }, // сеть может моргнуть — 1-2 ретрая ок
     );
 
     const accessToken = tokenResp.data?.access_token;
@@ -1945,7 +1943,7 @@ app.get("/auth/callback", async (req, res) => {
           params: { access_token: accessToken, fields: "id,name,email" },
           timeout: 15000,
         }),
-      { maxRetries: 2 }
+      { maxRetries: 2 },
     );
 
     const fbUser = meResp.data;
@@ -1982,7 +1980,7 @@ app.get("/auth/callback", async (req, res) => {
 
     if (e && e.code === "FARM_REUSE_PRO_ONLY") {
       return req.session.save(() =>
-        res.redirect("/paywall.html?reason=farm_reuse_pro")
+        res.redirect("/paywall.html?reason=farm_reuse_pro"),
       );
     }
 
@@ -1996,7 +1994,7 @@ app.get("/auth/callback", async (req, res) => {
       return res
         .status(502)
         .send(
-          "Meta connection error (network timeout). Try again in 1-2 minutes."
+          "Meta connection error (network timeout). Try again in 1-2 minutes.",
         );
     }
 
@@ -2058,7 +2056,7 @@ app.post("/api/adaccounts_multi", requireAppAuth, async (req, res) => {
        FROM fb_connections
        WHERE app_user_id = ? AND id IN (${connIds.map(() => "?").join(",")})`,
       [appUserId, ...connIds],
-      (err, rows) => (err ? reject(err) : resolve(rows || []))
+      (err, rows) => (err ? reject(err) : resolve(rows || [])),
     );
   });
 
@@ -2082,8 +2080,8 @@ app.post("/api/adaccounts_multi", requireAppAuth, async (req, res) => {
               limit: 500,
             },
             timeout: 20000,
-          }
-        )
+          },
+        ),
       );
 
       const list = r.data?.data || [];
@@ -2104,7 +2102,7 @@ app.post("/api/adaccounts_multi", requireAppAuth, async (req, res) => {
       console.log(
         "[adaccounts_multi] skip conn",
         c.id,
-        e?.response?.data?.error?.message || e.message
+        e?.response?.data?.error?.message || e.message,
       );
       continue;
     }
@@ -2119,7 +2117,7 @@ app.post("/api/adaccounts_multi", requireAppAuth, async (req, res) => {
        VALUES (?, ?, ?, ?)
        ON CONFLICT(app_user_id, ad_account_id)
        DO UPDATE SET last_seen_at=excluded.last_seen_at`,
-        [appUserId, act, now, now]
+        [appUserId, act, now, now],
       );
     }
   } catch (e) {
@@ -2288,7 +2286,7 @@ async function fetchAdInsightsMap(accountId, accessToken, since, until) {
     "tr",
     JSON.stringify(trObj),
     "token_head",
-    (accessToken || "").slice(0, 6)
+    (accessToken || "").slice(0, 6),
   );
 
   while (true) {
@@ -2310,7 +2308,7 @@ async function fetchAdInsightsMap(accountId, accessToken, since, until) {
         "msg=",
         msg,
         "trace=",
-        trace
+        trace,
       );
       return {}; // ✅ не валим весь крео, просто без метрик для этого act
     }
@@ -2358,7 +2356,7 @@ async function fetchAdInsightsDailyMap(accountId, accessToken, since, until) {
       console.warn(
         "[admin insights daily skip]",
         act,
-        e?.response?.data || e.message
+        e?.response?.data || e.message,
       );
       return {}; // не валим весь синк
     }
@@ -2431,7 +2429,7 @@ async function fetchAdsCreativesByIds(adIds, accessToken) {
           fields:
             "id,account_id,creative{id,name,thumbnail_url,object_story_spec,asset_feed_spec}",
         },
-      })
+      }),
     );
 
     const data = resp.data || {};
@@ -2571,7 +2569,7 @@ function extractCreativeMediaHint(creative) {
 // Simple in-memory caches to avoid duplicate requests under load (10-20 concurrent users).
 const CREATIVES_CACHE_TTL_MS = parseInt(
   process.env.CREATIVES_CACHE_TTL_MS || "300000",
-  10
+  10,
 ); // 5 min
 const creativesJobCache = new Map(); // key -> { ts, data }
 const creativesInFlight = new Map(); // key -> Promise
@@ -2596,7 +2594,7 @@ async function getVideoSourceCached(videoId, accessToken) {
       axios.get(`https://graph.facebook.com/${META_API_VERSION}/${videoId}`, {
         params: { access_token: accessToken, fields: "source" },
         timeout: 20000,
-      })
+      }),
     );
 
     const source = resp.data?.source || null;
@@ -2670,7 +2668,7 @@ async function fetchVideoMeta(videoId, accessToken) {
         fields: "source,title,thumbnails.limit(1){uri}",
       },
       timeout: 20000,
-    })
+    }),
   );
 
   const meta = {
@@ -2707,8 +2705,8 @@ async function fetchImageMeta(accountId, imageHash, accessToken) {
           limit: 1,
         },
         timeout: 20000,
-      }
-    )
+      },
+    ),
   );
 
   const row = (resp.data?.data || [])[0] || null;
@@ -2738,7 +2736,7 @@ async function buildCreativesAssetCards({
       accountId,
       accessToken,
       since,
-      until
+      until,
     );
     const adIds = Object.keys(adMetrics || {});
     if (!adIds.length) continue;
@@ -2824,7 +2822,7 @@ async function buildCreativesAssetCards({
         let imeta = await fetchImageMeta(
           card._first_account_id,
           card._image_hash,
-          accessToken
+          accessToken,
         );
 
         if (!imeta?.name && !imeta?.url && Array.isArray(card._account_ids)) {
@@ -2833,7 +2831,7 @@ async function buildCreativesAssetCards({
             const tmp = await fetchImageMeta(
               accId,
               card._image_hash,
-              accessToken
+              accessToken,
             );
             if (tmp?.name || tmp?.url) {
               imeta = tmp;
@@ -2852,7 +2850,7 @@ async function buildCreativesAssetCards({
       console.warn(
         "asset resolve failed:",
         card.asset_key,
-        e.response?.data || e.message
+        e.response?.data || e.message,
       );
     }
 
@@ -2896,7 +2894,7 @@ async function buildAdminCardsAssetLink({
       accountId,
       accessToken,
       since,
-      until
+      until,
     );
     const days = Object.keys(dailyByAd || {});
     if (!days.length) continue;
@@ -2995,7 +2993,7 @@ async function buildAdminCardsAssetLink({
         let imeta = await fetchImageMeta(
           card._first_account_id,
           card._image_hash,
-          accessToken
+          accessToken,
         );
         if (
           !imeta?.url &&
@@ -3006,7 +3004,7 @@ async function buildAdminCardsAssetLink({
             const tmp = await fetchImageMeta(
               acc,
               card._image_hash,
-              accessToken
+              accessToken,
             );
             if (tmp?.url) {
               imeta = tmp;
@@ -3021,7 +3019,7 @@ async function buildAdminCardsAssetLink({
       console.warn(
         "[admin resolve failed]",
         card.asset_key,
-        e?.response?.data || e.message
+        e?.response?.data || e.message,
       );
     }
     out.push(card);
@@ -3092,12 +3090,12 @@ app.post("/api/creatives/load_multi", requireAppAuth, async (req, res) => {
              .map(() => "?")
              .join(",")})`,
           [appUserId, ...connIds],
-          (err, rows) => (err ? reject(err) : resolve(rows || []))
+          (err, rows) => (err ? reject(err) : resolve(rows || [])),
         );
       });
 
       const activeConns = conns.filter(
-        (c) => c.status === "active" && c.access_token
+        (c) => c.status === "active" && c.access_token,
       );
       if (!activeConns.length) return [];
 
@@ -3236,7 +3234,7 @@ app.get("/api/campaigns", requireAppAuth, async (req, res) => {
      FROM fb_connections
      WHERE app_user_id = ? AND status='active' AND access_token IS NOT NULL`,
         [appUserId],
-        (err, rows) => (err ? reject(err) : resolve(rows || []))
+        (err, rows) => (err ? reject(err) : resolve(rows || [])),
       );
     });
 
@@ -3265,8 +3263,8 @@ app.get("/api/campaigns", requireAppAuth, async (req, res) => {
                   fields: "id,name,status,effective_status",
                   limit: 500,
                 },
-              }
-            )
+              },
+            ),
           ),
           metaRequest(() =>
             axios.get(
@@ -3278,8 +3276,8 @@ app.get("/api/campaigns", requireAppAuth, async (req, res) => {
                   fields: "id,campaign_id,status,effective_status",
                   limit: 500,
                 },
-              }
-            )
+              },
+            ),
           ),
           metaRequest(() =>
             axios.get(
@@ -3292,8 +3290,8 @@ app.get("/api/campaigns", requireAppAuth, async (req, res) => {
                     "id,adset_id,campaign_id,name,status,effective_status",
                   limit: 500,
                 },
-              }
-            )
+              },
+            ),
           ),
         ]);
 
@@ -3356,7 +3354,7 @@ ON CONFLICT(id) DO UPDATE SET
           c.status || "",
           c.effective_status || "",
           now,
-        ]
+        ],
       );
     });
 
@@ -3429,7 +3427,7 @@ app.get("/api/rules", requireAppAuth, (req, res) => {
         return res.status(500).json({ error: "Failed to load rules" });
       }
       res.json({ rules: rows });
-    }
+    },
   );
 });
 
@@ -3462,7 +3460,7 @@ app.post("/api/rules", requireAppAuth, async (req, res) => {
     db.get(
       `SELECT COUNT(*) as cnt FROM rules WHERE app_user_id = ?`,
       [u.id],
-      (err, row) => resolve(row?.cnt || 0)
+      (err, row) => resolve(row?.cnt || 0),
     );
   });
 
@@ -3550,7 +3548,7 @@ app.post("/api/rules", requireAppAuth, async (req, res) => {
         return res.status(500).json({ error: "Failed to create rule" });
       }
       res.json({ id: this.lastID });
-    }
+    },
   );
 });
 
@@ -3560,7 +3558,7 @@ app.get("/api/rules/:id", requireAppAuth, async (req, res) => {
 
   const rule = await getAsync(
     "SELECT * FROM rules WHERE id = ? AND app_user_id = ?",
-    [ruleId, req.session.appUserId]
+    [ruleId, req.session.appUserId],
   );
 
   if (!rule) {
@@ -3618,7 +3616,7 @@ app.put("/api/rules/:id", requireAppAuth, async (req, res) => {
     // 1. Загружаем существующее правило
     const existingRule = await getAsync(
       "SELECT * FROM rules WHERE id = ? AND app_user_id = ?",
-      [ruleId, req.session.appUserId]
+      [ruleId, req.session.appUserId],
     );
 
     if (!existingRule) {
@@ -3717,7 +3715,7 @@ app.put("/api/rules/:id", requireAppAuth, async (req, res) => {
           return res.status(500).json({ error: "Failed to update rule" });
         }
         res.json({ ok: true });
-      }
+      },
     );
   } catch (e) {
     console.error("rules update fatal error:", e);
@@ -3737,7 +3735,7 @@ app.delete("/api/rules/:id", requireAppAuth, (req, res) => {
         return res.status(500).json({ error: "Failed to delete rule" });
       }
       res.json({ ok: true });
-    }
+    },
   );
 });
 
@@ -3749,7 +3747,7 @@ app.post("/api/rules/:id/toggle-status", requireAppAuth, async (req, res) => {
   try {
     const rule = await getAsync(
       `SELECT id, status FROM rules WHERE id = ? AND app_user_id = ?`,
-      [ruleId, appUserId]
+      [ruleId, appUserId],
     );
 
     if (!rule) {
@@ -3778,7 +3776,7 @@ function getTimeRangeForAccount(timeframe, accountTimezone) {
   if (!accountTimezone) return null;
 
   const nowTz = new Date(
-    new Date().toLocaleString("en-US", { timeZone: accountTimezone })
+    new Date().toLocaleString("en-US", { timeZone: accountTimezone }),
   );
 
   const startOfDay = (d) => {
@@ -3936,7 +3934,7 @@ async function fetchInsightsForAccountLevel(
   accessToken,
   timeframe,
   cache = {},
-  timeRange = null
+  timeRange = null,
 ) {
   const act = normalizeActId(accountId);
   if (!act) return {};
@@ -3997,7 +3995,7 @@ async function fetchInsightsForAccountLevel(
     while (nextUrl) {
       const resp = isFirst
         ? await metaRequest(() =>
-            axios.get(nextUrl, { params: firstParams, timeout: 20000 })
+            axios.get(nextUrl, { params: firstParams, timeout: 20000 }),
           )
         : await metaRequest(() => axios.get(nextUrl, { timeout: 20000 }));
 
@@ -4019,7 +4017,7 @@ async function fetchInsightsForAccountLevel(
         const leads = getActionCount(r.actions, "lead");
         const registrations = getActionCount(
           r.actions,
-          "complete_registration"
+          "complete_registration",
         );
         const purchases = getActionCount(r.actions, "purchase");
         const installs = getActionCount(r.actions, "mobile_app_install");
@@ -4059,7 +4057,7 @@ async function fetchInsightsForAccountLevel(
       "sub=",
       sub,
       "msg=",
-      msg
+      msg,
     );
   }
 
@@ -4096,7 +4094,7 @@ async function applyActionToObject(objectId, level, accessToken, action) {
     case "decrease_budget_value": {
       if (level !== "adset") {
         throw new Error(
-          `Budget change supported only for adset (got level=${level})`
+          `Budget change supported only for adset (got level=${level})`,
         );
       }
 
@@ -4109,14 +4107,14 @@ async function applyActionToObject(objectId, level, accessToken, action) {
               access_token: accessToken,
               fields: "daily_budget,lifetime_budget",
             },
-          })
+          }),
         );
         data = currentResp?.data || {};
       } catch (e) {
         throw new Error(
           `Failed to load current budget: ${
             e.response?.data?.error?.message || e.message
-          }`
+          }`,
         );
       }
 
@@ -4127,8 +4125,8 @@ async function applyActionToObject(objectId, level, accessToken, action) {
       const budgetField = hasDaily
         ? "daily_budget"
         : hasLifetime
-        ? "lifetime_budget"
-        : null;
+          ? "lifetime_budget"
+          : null;
       if (!budgetField) throw new Error("No budget set");
 
       const currentBudget = safeNumber(data[budgetField], 0);
@@ -4142,7 +4140,7 @@ async function applyActionToObject(objectId, level, accessToken, action) {
         newBudget = Math.round(
           action.type.includes("increase")
             ? currentBudget * (1 + percent)
-            : currentBudget * (1 - percent)
+            : currentBudget * (1 - percent),
         );
       } else {
         // action.value приходит "в долларах" (major units), budget хранится в minor units
@@ -4176,7 +4174,7 @@ async function applyActionToObject(objectId, level, accessToken, action) {
   const resp = await metaRequest(() =>
     axios.post(url, fields, {
       params: { access_token: accessToken },
-    })
+    }),
   );
 
   return resp.data;
@@ -4203,7 +4201,7 @@ function insertRuleLog({
       if (err) {
         console.error("rule_logs insert error:", err);
       }
-    }
+    },
   );
 }
 
@@ -4245,8 +4243,8 @@ async function runRuleCore(user, rule, userCache) {
           g && g.action && Object.keys(g.action).length
             ? g.action
             : Object.keys(singleAction || {}).length
-            ? singleAction
-            : { type: "pause" };
+              ? singleAction
+              : { type: "pause" };
         const conds = Array.isArray(g.conditions) ? g.conditions : [];
         return { action, conditions: conds };
       });
@@ -4289,8 +4287,8 @@ async function runRuleCore(user, rule, userCache) {
               limit: 500,
             },
             timeout: 20000,
-          }
-        )
+          },
+        ),
       );
       requestCount += 1;
 
@@ -4300,7 +4298,7 @@ async function runRuleCore(user, rule, userCache) {
     } catch (e) {
       console.error(
         "Failed to fetch ad accounts during rule execution:",
-        e.response?.data || e.message
+        e.response?.data || e.message,
       );
       accountsToUse = [];
     }
@@ -4328,8 +4326,8 @@ async function runRuleCore(user, rule, userCache) {
                 access_token: accessToken,
                 fields: "timezone_name",
               },
-            }
-          )
+            },
+          ),
         );
         requestCount += 1;
 
@@ -4345,7 +4343,7 @@ async function runRuleCore(user, rule, userCache) {
         console.error(
           "Failed to fetch account timezone",
           accountId,
-          e.response?.data || e.message
+          e.response?.data || e.message,
         );
         // timezone останется null — timeRange функция должна это пережить
       }
@@ -4374,7 +4372,7 @@ async function runRuleCore(user, rule, userCache) {
         accessToken,
         timeframe,
         userCache,
-        timeRange
+        timeRange,
       );
       requestCount += 1;
       insightsTickCache.set(insightsCacheKey, rowsByObject);
@@ -4417,8 +4415,8 @@ async function runRuleCore(user, rule, userCache) {
           group.action && Object.keys(group.action).length
             ? group.action
             : Object.keys(singleAction || {}).length
-            ? singleAction
-            : { type: "pause" };
+              ? singleAction
+              : { type: "pause" };
 
         // ===== MAX CHANGES PER DAY =====
         if (
@@ -4444,7 +4442,7 @@ async function runRuleCore(user, rule, userCache) {
               (err, row2) => {
                 if (err) return resolve(0);
                 resolve(row2?.cnt || 0);
-              }
+              },
             );
           });
 
@@ -4458,7 +4456,7 @@ async function runRuleCore(user, rule, userCache) {
             objectId,
             level,
             accessToken,
-            groupAction
+            groupAction,
           );
           requestCount += 1;
           affected += 1;
@@ -4477,7 +4475,7 @@ async function runRuleCore(user, rule, userCache) {
                 applied_at
               ) VALUES (?, ?, ?, ?)
               `,
-              [rule.id, String(objectId), groupAction.type, Date.now()]
+              [rule.id, String(objectId), groupAction.type, Date.now()],
             );
           }
 
@@ -4495,7 +4493,7 @@ async function runRuleCore(user, rule, userCache) {
           console.error(
             "Error applying action",
             objectId,
-            e.response?.data || e.message
+            e.response?.data || e.message,
           );
         }
       }
@@ -4580,7 +4578,7 @@ app.post("/api/system/load-test", async (req, res) => {
       try {
         await axios.get(
           `https://graph.facebook.com/${META_API_VERSION}/me/adaccounts`,
-          { params: { access_token: token, limit: 1 } }
+          { params: { access_token: token, limit: 1 } },
         );
         results.push("ok");
       } catch (e) {
@@ -4665,7 +4663,7 @@ async function enforceNoActiveConnectionsAutopause() {
         if (err) {
           console.error(
             "Error in enforceNoActiveConnectionsAutopause query:",
-            err
+            err,
           );
           return resolve();
         }
@@ -4681,13 +4679,13 @@ async function enforceNoActiveConnectionsAutopause() {
             if (runErr) {
               console.error(
                 "Error pausing rules for users without connections:",
-                runErr
+                runErr,
               );
             }
             resolve();
-          }
+          },
         );
-      }
+      },
     );
   });
 }
@@ -4698,7 +4696,7 @@ async function enforceExpiredAutopause() {
   // Находим пользователей с истёкшим trial
   const expiredUsers = await allAsync(
     `SELECT id FROM app_users WHERE plan = 'trial' AND trial_ends_at IS NOT NULL AND ? > trial_ends_at`,
-    [now]
+    [now],
   );
 
   if (expiredUsers.length === 0) return;
@@ -4707,13 +4705,13 @@ async function enforceExpiredAutopause() {
     // Переводим в expired
     await runAsync(
       `UPDATE app_users SET plan = 'expired', updated_at = ? WHERE id = ?`,
-      [now, user.id]
+      [now, user.id],
     );
 
     // Паузим все активные правила этого пользователя
     await runAsync(
       `UPDATE rules SET status = 'paused', updated_at = ? WHERE app_user_id = ? AND status = 'active'`,
-      [now, user.id]
+      [now, user.id],
     );
   }
 }
@@ -4777,14 +4775,14 @@ async function schedulerTick() {
                 return resolve([]);
               }
               resolve(rows || []);
-            }
+            },
           );
         });
 
         if (!connections.length) {
           console.warn(
             "Scheduler: no active connections for app_user",
-            appUserId
+            appUserId,
           );
           continue;
         }
@@ -4799,7 +4797,7 @@ async function schedulerTick() {
             WHERE id = ?
               AND is_running = 0
             `,
-            [Date.now(), rule.id]
+            [Date.now(), rule.id],
           );
 
           if (lock.changes === 0) {
@@ -4814,7 +4812,7 @@ async function schedulerTick() {
             let ruleConnIds = [];
             try {
               ruleConnIds = JSON.parse(rule.fb_connection_ids || "[]").map(
-                String
+                String,
               );
             } catch (e) {
               console.error("Invalid fb_connection_ids JSON in rule", rule.id);
@@ -4825,7 +4823,7 @@ async function schedulerTick() {
             let availableConns = connections;
             if (ruleConnIds.length) {
               availableConns = connections.filter((c) =>
-                ruleConnIds.includes(String(c.id))
+                ruleConnIds.includes(String(c.id)),
               );
             }
 
@@ -4854,7 +4852,7 @@ async function schedulerTick() {
                 console.warn(
                   "Rule",
                   rule.id,
-                  "stopped due to Meta request limit"
+                  "stopped due to Meta request limit",
                 );
                 break;
               }
@@ -4893,7 +4891,7 @@ async function schedulerTick() {
                   console.warn(
                     "Rule",
                     rule.id,
-                    "reached Meta request limit during execution"
+                    "reached Meta request limit during execution",
                   );
                   break;
                 }
@@ -4903,13 +4901,13 @@ async function schedulerTick() {
                   rule.id,
                   "connection",
                   conn.id,
-                  e.response?.data || e.message
+                  e.response?.data || e.message,
                 );
 
                 errors.push(
                   `conn ${conn.id}: ${
                     e.response?.data?.error?.message || e.message
-                  }`
+                  }`,
                 );
               }
             }
@@ -4938,7 +4936,7 @@ async function schedulerTick() {
                       updated_at = ?
                   WHERE id = ?
                   `,
-                  [Date.now(), rule.id]
+                  [Date.now(), rule.id],
                 );
               }
             } else {
@@ -4950,8 +4948,8 @@ async function schedulerTick() {
                   totalRequests >= MAX_META_REQUESTS_PER_RULE
                     ? `Stopped after ${totalRequests} Meta requests (safety limit)`
                     : totalAffected > 0
-                    ? `Applied to ${totalAffected} objects`
-                    : "No objects matched conditions",
+                      ? `Applied to ${totalAffected} objects`
+                      : "No objects matched conditions",
                 affected: totalAffected || 0,
                 metaRequests: totalRequests || 0,
               });
@@ -4972,19 +4970,19 @@ async function schedulerTick() {
                     updated_at = ?
                 WHERE id = ?
                 `,
-                [t, t, rule.id]
+                [t, t, rule.id],
               );
             } catch (e) {
               console.error(
                 "[scheduler] failed to unlock rule",
                 rule.id,
-                e?.message || e
+                e?.message || e,
               );
             }
           }
         }
       }
-    }
+    },
   );
 }
 
@@ -5030,15 +5028,18 @@ async function schedulerLoop() {
 schedulerLoop();
 
 // ===== CLEAN OLD RULE LOGS (every hour) =====
-setInterval(() => {
-  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+setInterval(
+  () => {
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
 
-  db.run("DELETE FROM rule_logs WHERE executed_at < ?", [cutoff], (err) => {
-    if (err) {
-      console.error("rule_logs cleanup error:", err);
-    }
-  });
-}, 60 * 60 * 1000); // раз в час
+    db.run("DELETE FROM rule_logs WHERE executed_at < ?", [cutoff], (err) => {
+      if (err) {
+        console.error("rule_logs cleanup error:", err);
+      }
+    });
+  },
+  60 * 60 * 1000,
+); // раз в час
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
